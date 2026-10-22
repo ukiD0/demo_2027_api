@@ -1,0 +1,48 @@
+import sqlite3
+
+from fastapi import *
+from fastapi.responses import JSONResponse
+from sqlite_utils import Database
+
+app = FastAPI()
+db = Database(sqlite3.connect("notes.db", check_same_thread=False))
+
+@app.get("/api/notes")
+def get_notes(id_user: str | None = Query(None)):
+    """Список заметок. 200 — ок, 400 — плохой параметр, 500 — сбой сервера."""
+    if id_user and not id_user.isdigit():
+        return JSONResponse(status_code=400, content={"error": "Параметр id_user должен быть целым числом"})
+
+    try:
+        sql = """
+            SELECT * FROM notes
+            JOIN users ON users.id = notes.id_user
+        """
+        if id_user:
+            sql += f"""WHERE notes.id_user = {int(id_user)}"""
+        
+        rows = db.query(sql)
+        
+        resp_arr = []
+        for row in rows:
+            resp_arr.append(
+                {
+                    "id": f"{row['id']:05d}", 
+                    "title_user": f"{row['title']} - {row['login']}", 
+                    "content": row["content"],
+                    "formatted_date": row["created_at"]
+                }
+            )
+        return resp_arr
+
+    except Exception as error:
+            print("ОШИБКА при работе с базой данных:", error)
+            return JSONResponse(
+                status_code=500,
+                content={"error": "Ошибка подключения к базе данных"},
+            )
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="127.0.0.1", port=8000)

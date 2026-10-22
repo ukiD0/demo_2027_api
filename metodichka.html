@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Практическая работа. Модуль 5. Интеграция программных модулей</title>
+<style>
+  :root{
+    --ink:#22262b; --muted:#5c6470; --line:#d8d3c9;
+    --accent:#7a5c2e; --soft:#faf7f1; --code:#f3f0e9; --codeink:#2b2b2b;
+    --ok:#eaf5ea; --okline:#8fbf8f; --warn:#fdf3e3; --warnline:#d9a441;
+    --err:#fdeeee; --errline:#d47a7a;
+  }
+  *{box-sizing:border-box}
+  @page{ size:A4; margin:15mm; }
+  body{
+    margin:0; padding:0 24px 60px; color:var(--ink); background:#fff;
+    font-family:"PT Serif", Georgia, "Times New Roman", serif;
+    font-size:15px; line-height:1.62;
+  }
+  .wrap{max-width:860px; margin:0 auto;}
+  .cover{border-bottom:3px double var(--line); padding:34px 0 22px; margin-bottom:26px;}
+  .cover .kicker{font-family:Arial, sans-serif; font-size:12px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--accent); font-weight:bold;}
+  .cover h1{font-size:30px; line-height:1.2; margin:10px 0 8px;}
+  .cover .sub{color:var(--muted); font-size:14px; margin:0;}
+  h2{font-size:21px; margin:44px 0 14px; padding-bottom:7px;
+    border-bottom:2px solid var(--accent); page-break-after:avoid;}
+  h3{font-size:17px; margin:28px 0 10px; color:#3a3126; page-break-after:avoid;}
+  h4{font-size:15px; margin:22px 0 8px; page-break-after:avoid;}
+  p{margin:9px 0;}
+  ul,ol{margin:9px 0 9px 22px; padding:0;}
+  li{margin:5px 0;}
+  code{background:var(--code); padding:1px 5px; border-radius:3px;
+    font-family:"Consolas","Courier New",monospace; font-size:13.5px; color:var(--codeink);}
+  pre{
+    background:var(--code); border:1px solid var(--line); border-left:4px solid var(--accent);
+    border-radius:4px; padding:12px 14px; overflow-x:auto;
+    font-family:"Consolas","Courier New",monospace; font-size:12.8px; line-height:1.5;
+    page-break-inside:avoid; white-space:pre-wrap; word-break:break-word;
+  }
+  pre code{background:none; padding:0; font-size:inherit;}
+  table{border-collapse:collapse; width:100%; margin:14px 0; font-size:13.6px;
+    page-break-inside:avoid; font-family:Arial, sans-serif;}
+  th,td{border:1px solid var(--line); padding:7px 9px; text-align:left; vertical-align:top;}
+  th{background:var(--soft); font-weight:bold;}
+  td code, th code{font-size:12.6px;}
+  .callout{padding:11px 14px; margin:14px 0; border-radius:4px;
+    border-left:5px solid; page-break-inside:avoid; font-family:Arial, sans-serif;
+    font-size:13.8px; line-height:1.55;}
+  .callout.warn{background:var(--warn); border-color:var(--warnline);}
+  .callout.ok{background:var(--ok); border-color:var(--okline);}
+  .callout.err{background:var(--err); border-color:var(--errline);}
+  .callout b{color:#5a4520;}
+  .step{
+    background:var(--soft); border:1px solid var(--line); border-left:5px solid var(--accent);
+    padding:8px 12px; margin:26px 0 10px; border-radius:4px;
+    font-family:Arial, sans-serif; font-size:14.6px; font-weight:bold;
+    page-break-after:avoid;
+  }
+  .frag{
+    background:#fff; border:1px solid var(--line); border-top:4px solid var(--accent);
+    border-radius:4px; padding:2px 12px 8px; margin:16px 0; page-break-inside:avoid;
+  }
+  .frag .frag-title{font-family:Arial, sans-serif; font-weight:bold; font-size:14.2px;
+    color:var(--accent); margin:8px 0 6px;}
+  .toc{background:var(--soft); border:1px solid var(--line); border-radius:5px;
+    padding:14px 20px; font-family:Arial, sans-serif; font-size:14px; page-break-inside:avoid;}
+  .toc ol{margin:6px 0 0 20px;}
+  .toc li{margin:3px 0;}
+  .muted{color:var(--muted); font-size:13.5px;}
+  .tag{display:inline-block; background:var(--soft); border:1px solid var(--line);
+    border-radius:10px; padding:0 8px; font-size:12px; font-family:Arial,sans-serif;
+    color:var(--muted);}
+  .yes{color:#2f7d32; font-weight:bold;}
+  .no{color:#b03030; font-weight:bold;}
+  hr{border:none; border-top:1px solid var(--line); margin:34px 0;}
+  .checklist{font-family:Arial,sans-serif; font-size:14px; padding-left:0; margin-left:0;}
+  .checklist li{list-style:none; margin:7px 0;}
+  .checklist li::before{content:"☐  "; font-size:16px;}
+  @media print{
+    body{font-size:12.4pt; padding:0;}
+    h2{page-break-before:always;}
+    h2:first-of-type{page-break-before:avoid;}
+    .cover{page-break-after:always;}
+    pre{font-size:10.2pt;}
+    table{font-size:10.4pt;}
+    a{color:var(--ink); text-decoration:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="cover">
+  <h1>Практическая работа. Модуль 5<br>Интеграция программных модулей</h1>
+</div>
+
+<div class="toc">
+  <b>СОДЕРЖАНИЕ</b>
+  <ol>
+    <li>Памятка: что нужно помнить из модуля 5</li>
+    <li>Теория: API, HTTP и JSON простыми словами</li>
+    <li>База данных: создаём <code>notes.db</code> простым SQL-скриптом</li>
+    <li>Наш проект: построчный разбор файла <code>app.py</code></li>
+    <li>Практика, этап 1: запускаем API</li>
+    <li>Практика, этап 2: знакомство с Postman</li>
+    <li>Практика, этап 3: пишем тесты в Postman</li>
+    <li>Практика, этап 4: создаём коллекцию с нуля</li>
+    <li>Что сдавать: сборка <code>project_api.zip</code></li>
+    <li>Типичные ошибки и как их читать</li>
+    <li>Задания для самостоятельной работы</li>
+    <li>Приложение А. Полный SQL-скрипт создания базы</li>
+    <li>Приложение Б. Коллекция <code>postman_collection.json</code></li>
+  </ol>
+</div>
+
+<div class="callout warn">
+  <b>ПРОЧТИ ПЕРЕД НАЧАЛОМ.</b> Эта работа состоит из трёх больших частей, и делать их надо
+  <b>строго по порядку</b>: сначала база данных (раздел 3), потом код API (раздел 4),
+  потом Postman (разделы 6–8). Если начать с Postman, он не сможет подключиться и будет
+  писать ошибку соединения — это самая частая проблема на экзамене.
+</div>
+
+<!-- ============================================================= -->
+<h2>1. Памятка: что нужно помнить из модуля 5</h2>
+
+<h3>1.1. Запуск сервера</h3>
+<pre><code>uvicorn.run(app, host="127.0.0.1", port=8000)</code></pre>
+<p>Сервер работает, пока открыто окно терминала. Закрыл терминал — API «умерло»,
+и Postman начнёт писать <code>Could not send request</code>.</p>
+
+<h3>1.2. Объявление маршрута (эндпоинта)</h3>
+<pre><code>@app.get("/api/notes")
+def get_notes():
+    ...
+</code></pre>
+
+<h3>1.3. Параметр запроса из строки адреса</h3>
+<pre><code>def get_notes(id_user: str | None = Query(None)):</code></pre>
+<p>Читается вот отсюда: <code>/api/notes?id_user=1</code></p>
+
+<h3>1.4. Ответ с нужным кодом</h3>
+<pre><code>return JSONResponse(status_code=400, content={"error": "..."})</code></pre>
+
+<h3>1.5. Форматирование числа в строку</h3>
+<pre><code>f"{row['id']:05d}"     # 1  ->  "00001"
+                       # 42 ->  "00042"</code></pre>
+<p><code>05d</code> читается так: <b>0</b> — добивать нулями, <b>5</b> — до пяти знаков,
+<b>d</b> — целое число (decimal).</p>
+
+<h3>1.6. Postman: четыре вкладки запроса</h3>
+<table>
+  <tr><th>Вкладка</th><th>Зачем нужна</th></tr>
+  <tr><td><b>Params</b></td><td>Параметры в строке адреса: <code>id_user = 1</code></td></tr>
+  <tr><td><b>Headers</b></td><td>Заголовки, например <code>Accept: application/json</code></td></tr>
+  <tr><td><b>Body</b></td><td>Тело запроса (для GET не нужно)</td></tr>
+  <tr><td><b>Scripts</b> (старое имя <b>Tests</b>)</td><td>Код на JavaScript, который проверяет ответ</td></tr>
+</table>
+
+<h3>1.7. Скелет любого теста</h3>
+<pre><code>pm.test("Что мы проверяем", function () {
+    pm.expect(что_проверяем).to.eql(чему_равно);
+});</code></pre>
+<ul>
+  <li><code>pm.response.to.have.status(200)</code> — «код ответа равен 200»;</li>
+  <li><code>pm.response.json()</code> — «преврати текст ответа в объект JavaScript»;</li>
+  <li><code>pm.expect(...)</code> — «я ожидаю, что...»</li>
+</ul>
+
+<h3>1.8. Главное требование модуля 5</h3>
+<div class="callout warn">
+  <b>ДАННЫЕ НЕ ВЫДАЮТСЯ В ИСХОДНОМ ВИДЕ.</b> Нельзя просто отдать клиенту то, что лежит
+  в таблице. Названия полей должны измениться, значения — пройти обработку.
+  В нашем проекте: <code>id</code> → строка из 5 цифр; <code>title</code> +
+  <code>login</code> → одно поле <code>title_user</code>;
+  <code>created_at</code> → <code>formatted_date</code>.
+  Именно это проверяет тест «Данные отданы в обработанном виде, а не как в базе».
+</div>
+
+<!-- ============================================================= -->
+<h2>2. Теория: API, HTTP и JSON простыми словами</h2>
+
+<h3>2.1. Что такое API</h3>
+<p>Представь кафе. Ты сидишь за столиком, а еда готовится на кухне. Ты не можешь зайти
+на кухню и взять что хочешь сам — там чужая территория и свои правила. Зато есть
+<b>официант</b>: ты говоришь ему «принеси борщ», он идёт на кухню, кухня готовит,
+официант приносит тебе тарелку.</p>
+<p><b>API</b> (Application Programming Interface — «программный интерфейс приложения»)
+— это такой официант для программ. Одна программа не лазит напрямую в базу другой
+программы. Она отправляет <b>запрос</b> — и получает <b>ответ</b> в понятном формате.</p>
+<p>В модуле 5 ты пишешь именно «официанта»:</p>
+<ol>
+  <li>Приходит запрос: «дай заметки пользователя №1».</li>
+  <li>Твой API идёт в базу данных <code>notes.db</code> и забирает нужные строки.</li>
+  <li>API <b>обрабатывает</b> их: переименовывает поля, склеивает заголовок с логином.</li>
+  <li>Отдаёт готовый JSON клиенту.</li>
+</ol>
+
+<h3>2.2. Клиент, сервер и порт</h3>
+<table>
+  <tr><th>Понятие</th><th>Что это в нашем проекте</th></tr>
+  <tr><td><b>Сервер</b></td><td>Программа <code>app.py</code>, запущенная через uvicorn. Она «слушает» и ждёт запросы</td></tr>
+  <tr><td><b>Клиент</b></td><td>Postman, браузер или другая программа, которая отправляет запросы</td></tr>
+  <tr><td><b>Адрес</b></td><td><code>http://127.0.0.1:8000</code></td></tr>
+  <tr><td><b><code>127.0.0.1</code></b></td><td>«Этот компьютер». То же самое, что <code>localhost</code>. Никуда в интернет запрос не уходит</td></tr>
+  <tr><td><b><code>8000</code></b></td><td><b>Порт</b> — «дверь» на компьютере. На одном компьютере работает много программ, и чтобы они не путались, у каждой своя дверь. Postman должен стучаться <b>именно в ту дверь</b>, за которой стоит uvicorn</td></tr>
+</table>
+
+<h3>2.3. Из чего состоит HTTP-запрос</h3>
+<p><b>HTTP</b> — язык, на котором клиент и сервер разговаривают. Каждый запрос состоит из четырёх частей:</p>
+<table>
+  <tr><th>Часть</th><th>Пример</th><th>Смысл</th></tr>
+  <tr><td><b>Метод</b></td><td><code>GET</code></td><td>Что я хочу сделать: <code>GET</code> — «прочитать», <code>POST</code> — «создать», <code>PUT</code> — «заменить», <code>DELETE</code> — «удалить»</td></tr>
+  <tr><td><b>URL (адрес)</b></td><td><code>http://127.0.0.1:8000/api/notes?id_user=1</code></td><td>Куда именно стучимся</td></tr>
+  <tr><td><b>Заголовки</b></td><td><code>Accept: application/json</code></td><td>Дополнительная информация: «я хочу ответ в формате JSON»</td></tr>
+  <tr><td><b>Тело</b></td><td><code>{"title": "Новая"}</code></td><td>Данные, которые мы отправляем. Для <code>GET</code> тело обычно пустое</td></tr>
+</table>
+
+<h3>2.4. Из чего состоит URL</h3>
+<pre><code>http://127.0.0.1:8000/api/notes?id_user=1
+│      │         │   │             │
+│      │         │   │             └─ ПАРАМЕТР ЗАПРОСА (query parameter)
+│      │         │   └─ ПУТЬ (path) — что за ресурс просим
+│      │         └─ ПОРТ
+│      └─ ХОСТ (компьютер)
+└─ ПРОТОКОЛ (как передаём данные)
+</code></pre>
+<p>Параметр начинается после знака <code>?</code>. Если параметров несколько, они
+разделяются знаком <code>&amp;</code>:</p>
+<pre><code>/api/notes?id_user=1&amp;limit=10</code></pre>
+<p>В Postman параметры удобно задавать на вкладке <b>Params</b>, а не вручную в строке —
+тогда Postman сам правильно их закодирует.</p>
+
+<h3>2.5. Коды ответов</h3>
+<p>Ответ всегда начинается с <b>трёхзначного кода</b>. По нему клиент понимает, всё ли
+хорошо, ещё до того, как прочитает содержимое.</p>
+<table>
+  <tr><th>Код</th><th>Название</th><th>Что означает</th><th>В нашем API</th></tr>
+  <tr><td><b>200</b></td><td>OK</td><td>Всё хорошо, данные в теле ответа</td><td>Успешный список заметок; а также «данных не найдено» — пустой массив</td></tr>
+  <tr><td><b>400</b></td><td>Bad Request</td><td>Клиент прислал ерунду — сервер не может это обработать</td><td>Параметр <code>id_user</code> не число</td></tr>
+  <tr><td><b>404</b></td><td>Not Found</td><td>Такого адреса на сервере нет</td><td>Запрос на <code>/api/notes/1</code></td></tr>
+  <tr><td><b>405</b></td><td>Method Not Allowed</td><td>Адрес есть, но такой метод не поддерживается</td><td><code>POST /api/notes</code></td></tr>
+  <tr><td><b>500</b></td><td>Internal Server Error</td><td>Сервер сломался: ошибка внутри кода</td><td>Например, файл базы не найден</td></tr>
+</table>
+<div class="callout ok">
+  <b>Правило запоминания.</b> Первая цифра кода — «кто виноват»:<br>
+  <b>2</b>xx — всё хорошо · <b>3</b>xx — переехало, ищи в другом месте ·
+  <b>4</b>xx — виноват клиент · <b>5</b>xx — виноват сервер.
+</div>
+
+<h3>2.6. JSON — формат, в котором передаются данные</h3>
+<p>JSON — текстовый формат, удобный и человеку, и программе. В нём всего четыре правила:</p>
+<ul>
+  <li>объект — в фигурных скобках: <code>{"ключ": "значение"}</code>;</li>
+  <li>массив (список) — в квадратных скобках: <code>[ ... ]</code>;</li>
+  <li>строки — в двойных кавычках <b>всегда</b>;</li>
+  <li>между элементами — запятые, последняя запятая запрещена.</li>
+</ul>
+<p>Вот как выглядит ответ нашего API:</p>
+<pre><code>[
+  {
+    "id": "00001",
+    "title_user": "Конференция ИТ - user25",
+    "content": "Содержимое заметки",
+    "formatted_date": "03.02.2027"
+  },
+  {
+    "id": "00002",
+    "title_user": "Список задач - admin",
+    "content": "Купить продукты, позвонить в банк",
+    "formatted_date": "07.02.2027"
+  }
+]</code></pre>
+<p>Обрати внимание: <code>"00001"</code> — это <b>строка</b> (в кавычках), а не число.
+Именно этого требует задание: данные обработаны, а не отданы как есть.</p>
+
+<h3>2.7. Что такое Postman</h3>
+<p><b>Postman</b> — программа, которая умеет отправлять HTTP-запросы и показывать ответы.
+Браузер тоже умеет, но умеет только <code>GET</code> и не умеет проверять ответы
+автоматически. Postman:</p>
+<ul>
+  <li>сохраняет <b>запросы</b>, чтобы не набирать адрес каждый раз;</li>
+  <li>складывает запросы в <b>коллекцию</b> — это просто «папка с запросами»;</li>
+  <li>позволяет написать <b>тесты</b> — код, который сам проверяет ответ и ставит
+      «PASSED» или «FAILED»;</li>
+  <li>умеет прогнать всю коллекцию подряд и показать отчёт — это делает
+      <b>Collection Runner</b>.</li>
+</ul>
+<p>Три главные зоны окна Postman:</p>
+<table>
+  <tr><th>Зона</th><th>Где находится</th><th>Зачем</th></tr>
+  <tr><td><b>Боковая панель</b></td><td>Слева <span class="tag">Collections</span></td><td>Дерево коллекций, папок и запросов</td></tr>
+  <tr><td><b>Строка запроса</b></td><td>Сверху по центру</td><td>Метод + адрес + кнопка <b>Send</b></td></tr>
+  <tr><td><b>Область ответа</b></td><td>Снизу по центру</td><td>Вкладки <b>Body</b>, <b>Headers</b>, <b>Test Results</b></td></tr>
+</table>
+
+<h3>2.8. Что такое автотест</h3>
+<p>Автотест — это маленькая программа, которая сама проверяет ответ. В Postman тесты
+пишут на языке JavaScript на вкладке <b>Scripts</b> (в старых версиях — <b>Tests</b>).
+Скелет всегда один и тот же:</p>
+<pre><code>pm.test("НАЗВАНИЕ ПРОВЕРКИ", function () {
+    КОД_ПРОВЕРКИ;
+});</code></pre>
+<p><code>pm.test(...)</code> означает: «выполни код внутри и, если он не выбросит ошибку,
+поставь этому тесту галочку PASSED, а если выбросит — крестик FAILED».</p>
+<div class="callout ok">
+  <b>Почему это удобно.</b> Один раз написал тест — и дальше при каждом запуске он сам
+  проверяет, что API ничего не сломал. Это и есть «тесты, подтверждающие
+  работоспособность решения», которые требует задание.
+</div>
+
+<!-- ============================================================= -->
+<h2>3. База данных: создаём <code>notes.db</code> простым SQL-скриптом</h2>
+
+<h3>3.1. Что такое SQL и зачем он нам</h3>
+<p><b>База данных</b> — это файл, внутри которого лежат <b>таблицы</b>. Таблица очень
+похожа на лист в Excel: у неё есть <b>колонки</b> (в базах их называют <b>полями</b>)
+и <b>строки</b> (в базах их называют <b>записями</b>).</p>
+<p><b>SQL</b> — язык, на котором пишут команды для базы данных. Каждая команда
+заканчивается точкой с запятой <code>;</code>. Нам понадобятся всего три команды:</p>
+<table>
+  <tr><th>Команда</th><th>Что делает</th></tr>
+  <tr><td><code>CREATE TABLE</code></td><td>Создать таблицу (объявить её колонки)</td></tr>
+  <tr><td><code>INSERT INTO</code></td><td>Добавить в таблицу строки с данными</td></tr>
+  <tr><td><code>SELECT</code></td><td>Прочитать данные. Эту команду за нас пишет код <code>app.py</code></td></tr>
+</table>
+<p>Никакие библиотеки устанавливать не нужно: SQL понимает сама база данных, а
+выполнять скрипт мы будем в программе <b>DB Browser for SQLite</b>.</p>
+
+<h3>3.2. Какие таблицы нужны нашему проекту</h3>
+<p>По заданию обязательна таблица <code>notes</code> (Заметки). Выглядит она так:</p>
+<table>
+  <tr><th>Имя поля</th><th>Тип данных</th><th>Ключ</th><th>Смысл</th></tr>
+  <tr><td><code>id</code></td><td>INTEGER</td><td>первичный ключ</td><td>Номер заметки</td></tr>
+  <tr><td><code>title</code></td><td>TEXT</td><td>—</td><td>Заголовок заметки</td></tr>
+  <tr><td><code>content</code></td><td>TEXT</td><td>—</td><td>Текст заметки</td></tr>
+  <tr><td><code>id_user</code></td><td>INTEGER</td><td>внешний ключ</td><td>Кто автор заметки</td></tr>
+  <tr><td><code>created_at</code></td><td>TEXT</td><td>—</td><td>Дата создания</td></tr>
+</table>
+<p>Но нужна ещё <b>вторая</b> таблица — <code>users</code> (Пользователи):</p>
+<table>
+  <tr><th>Имя поля</th><th>Тип данных</th><th>Ключ</th><th>Смысл</th></tr>
+  <tr><td><code>id</code></td><td>INTEGER</td><td>первичный ключ</td><td>Номер пользователя</td></tr>
+  <tr><td><code>login</code></td><td>TEXT</td><td>—</td><td>Логин пользователя</td></tr>
+</table>
+<div class="callout warn">
+  <b>ПОЧЕМУ ДВЕ ТАБЛИЦЫ, ХОТЯ В ЗАДАНИИ УПОМЯНУТА ОДНА.</b> В правилах обработки сказано:
+  поле <code>title_user</code> — это «конкатенация (объединение) двух строк:
+  <code>title</code> из таблицы <code>notes</code> и <code>login</code> из таблицы
+  <code>users</code>». Значит, логин где-то должен храниться. Единственное подходящее
+  место — таблица <code>users</code>. Без неё выполнить правило невозможно.<br><br>
+  Две таблицы связывает поле <code>notes.id_user</code>: оно указывает на
+  <code>users.id</code>. Например, заметка с <code>id_user = 2</code> принадлежит
+  пользователю с <code>id = 2</code>, то есть <code>user25</code>.
+</div>
+
+<h3>3.3. Даты: главное правило, из-за которого теряют баллы</h3>
+<div class="callout err">
+  <b>ДАТА ЗАПИСЫВАЕТСЯ В БАЗУ СРАЗУ В ФОРМАТЕ ДД.ММ.ГГГГ.</b><br><br>
+  Требуется <code>"formatted_date": "03.02.2027"</code> — день, точка, месяц, точка, год.<br><br>
+  В нашем коде дата <b>не преобразуется</b>: он берёт <code>row["created_at"]</code>
+  и отдаёт как есть, только под другим именем. Значит, <b>правильный формат должен быть
+  уже в базе</b>.<br><br>
+  Пиши в базе <code>'03.02.2027'</code> — и всё получится само.<br>
+  Напишешь <code>'2027-02-03'</code> — клиент получит дефисы, и тест
+  «formatted_date — дата в формате ДД.ММ.ГГГГ» станет красным.
+</div>
+<p><b>Какие именно даты вписывать — не важно.</b> Могут быть любые числа, любой год.
+Проверяется только <b>формат</b>: две цифры, точка, две цифры, точка, четыре цифры.
+Два примера допустимых значений: <code>03.02.2027</code> и <code>17.11.2026</code>.</p>
+<p>Колонка <code>created_at</code> имеет тип <code>TEXT</code> — то есть дата хранится
+как обычная строка. SQLite не проверяет, «настоящая» ли это дата, поэтому за формат
+отвечаешь ты. Это одновременно и удобно (не нужно ничего преобразовывать в коде), и
+опасно (можно случайно написать дату «наоборот», и никто не подскажет).</p>
+
+<h3>3.4. SQL-скрипт создания базы</h3>
+<p>Открой любой текстовый редактор (Блокнот тоже подойдёт), скопируй туда текст ниже
+и сохрани файл под именем <code>create_db.sql</code> в папку проекта.</p>
+<p>Комментарии в SQL начинаются с двух дефисов <code>--</code>. База их не выполняет,
+они нужны человеку для чтения.</p>
+
+<pre><code>-- ================================================
+-- Шаг 1. Удаляем старые таблицы, если они уже есть.
+-- Это нужно, чтобы скрипт можно было запускать повторно
+-- без ошибки «такая таблица уже существует».
+-- ================================================
+DROP TABLE IF EXISTS notes;
+DROP TABLE IF EXISTS users;
+
+
+-- ================================================
+-- Шаг 2. Создаём таблицу пользователей.
+-- id    — номер пользователя, первичный ключ;
+-- login — логин, обязателен и не должен повторяться.
+-- ================================================
+CREATE TABLE users (
+    id    INTEGER PRIMARY KEY,
+    login TEXT NOT NULL UNIQUE
+);
+
+
+-- ================================================
+-- Шаг 3. Создаём таблицу заметок.
+-- id_user — номер пользователя из таблицы users.
+-- created_at — дата. Тип TEXT: храним строкой.
+-- ================================================
+CREATE TABLE notes (
+    id         INTEGER PRIMARY KEY,
+    title      TEXT NOT NULL,
+    content    TEXT,
+    id_user    INTEGER NOT NULL REFERENCES users(id),
+    created_at TEXT
+);
+
+
+-- ================================================
+-- Шаг 4. Добавляем пользователей.
+-- ================================================
+INSERT INTO users (id, login) VALUES
+    (1, 'admin'),
+    (2, 'user25'),
+    (3, 'ivanov'),
+    (4, 'petrova');
+
+
+-- ================================================
+-- Шаг 5. Добавляем заметки.
+-- ВНИМАНИЕ! Даты записаны сразу в формате ДД.ММ.ГГГГ.
+-- Числа могут быть любые — важен только формат.
+-- ================================================
+INSERT INTO notes (id, title, content, id_user, created_at) VALUES
+    (1, 'Конференция ИТ',     'Содержимое заметки',                   2, '03.02.2027'),
+    (2, 'Список задач',       'Купить продукты, позвонить в банк',    1, '07.02.2027'),
+    (3, 'Отчёт за квартал',   'Подготовить отчёт для руководителя',   3, '14.02.2027'),
+    (4, 'Идеи для проекта',   'Добавить авторизацию и кэширование',   2, '21.02.2027'),
+    (5, 'Встреча с командой', 'Обсудить сроки и распределение задач', 4, '28.02.2027');
+</code></pre>
+
+<div class="callout ok">
+  <b>ЗАЧЕМ НУЖНЫ <code>DROP TABLE IF EXISTS</code>.</b> Без этих двух строк повторный
+  запуск скрипта упал бы с ошибкой «таблица уже существует». С ними скрипт можно
+  запускать сколько угодно раз — старые таблицы просто стираются и создаются заново.
+  <b>Внимание:</b> если ты уже вносил изменения в базу, они пропадут.
+</div>
+
+<h3>3.5. Как выполнить скрипт</h3>
+
+<div class="step">Вариант 1. DB Browser for SQLite (рекомендуется)</div>
+<ol>
+  <li>Открой <b>DB Browser for SQLite</b> (значок на рабочем столе или в меню «Пуск»).</li>
+  <li>Меню <b>Файл</b> → <b>Создать базу данных</b> (<i>New Database</i>).</li>
+  <li>В окне сохранения выбери <b>папку проекта</b> (ту, где будет лежать
+      <code>app.py</code>) и введи имя файла: <code>notes.db</code>. Нажми
+      <b>Сохранить</b>.</li>
+  <li>Появится окно <b>«Редактировать определение таблицы»</b>. Нам оно не нужно —
+      таблицы мы создадим скриптом. Нажми <b>Отмена</b> (<i>Cancel</i>).</li>
+  <li>Перейди на вкладку <b>Выполнить SQL</b> (<i>Execute SQL</i>) — вторая слева.</li>
+  <li>Вставь туда <b>весь</b> скрипт из раздела 3.4.</li>
+  <li>Выдели весь текст сочетанием <code>Ctrl+A</code> и нажми кнопку выполнения —
+      значок <b>▶</b> на панели сверху (или <code>Ctrl+Return</code>).</li>
+  <li>Перейди на вкладку <b>Структура базы данных</b> (<i>Database Structure</i>):
+      в левом списке должны появиться таблицы <code>notes</code> и
+      <code>users</code>.</li>
+  <li>Перейди на вкладку <b>Просмотр данных</b> (<i>Browse Data</i>), в выпадающем
+      списке выбери <code>notes</code> — увидишь пять строк.</li>
+  <li><b>ОБЯЗАТЕЛЬНО:</b> нажми <b>Записать изменения</b> (<i>Write Changes</i>),
+      иначе данные не сохранятся в файл. Иконка — дискетка на панели сверху
+      (или <code>Ctrl+S</code>).</li>
+  <li>Закрой DB Browser (можешь не закрывать, но перед запуском <code>app.py</code>
+      лучше закрыть — иначе база может оказаться «заблокированной»).</li>
+</ol>
+
+<div class="step">Вариант 2. Командная строка (если есть sqlite3)</div>
+<p>Открой терминал в папке проекта и выполни одну из команд:</p>
+<pre><code>sqlite3 notes.db ".read create_db.sql"</code></pre>
+<p>или через перенаправление ввода:</p>
+<pre><code>sqlite3 notes.db &lt; create_db.sql</code></pre>
+<p>Проверить, что всё создалось:</p>
+<pre><code>sqlite3 notes.db "SELECT * FROM notes;"</code></pre>
+<p>Выйти из консоли базы: команда <code>.quit</code>.</p>
+
+<h3>3.6. Проверка: всё ли правильно</h3>
+<p>В DB Browser на вкладке <b>Выполнить SQL</b> запусти такой запрос:</p>
+<pre><code>SELECT id, title, id_user, created_at FROM notes;</code></pre>
+<p>Ты должен увидеть примерно такую таблицу. <b>Обрати внимание на последний столбец</b> —
+в датах стоят точки, а не дефисы:</p>
+<table>
+  <tr><th>id</th><th>title</th><th>id_user</th><th>created_at</th></tr>
+  <tr><td>1</td><td>Конференция ИТ</td><td>2</td><td>03.02.2027</td></tr>
+  <tr><td>2</td><td>Список задач</td><td>1</td><td>07.02.2027</td></tr>
+  <tr><td>3</td><td>Отчёт за квартал</td><td>3</td><td>14.02.2027</td></tr>
+  <tr><td>4</td><td>Идеи для проекта</td><td>2</td><td>21.02.2027</td></tr>
+  <tr><td>5</td><td>Встреча с командой</td><td>4</td><td>28.02.2027</td></tr>
+</table>
+<p>Проверить связь двух таблиц можно так:</p>
+<pre><code>SELECT notes.title, users.login
+FROM notes
+JOIN users ON users.id = notes.id_user;</code></pre>
+<p>Результат должен быть таким: <code>Конференция ИТ | user25</code>,
+<code>Список задач | admin</code>, <code>Отчёт за квартал | ivanov</code>,
+<code>Идеи для проекта | user25</code>, <code>Встреча с командой | petrova</code>.
+Это ровно то, из чего код соберёт поле <code>title_user</code>.</p>
+<!-- ============================================================= -->
+<h2>4. Наш проект: построчный разбор файла <code>app.py</code></h2>
+
+<div class="callout ok">
+  <b>КАК ЧИТАТЬ ЭТОТ РАЗДЕЛ.</b> Полный код мы соберём в самом конце, в пункте 4.11.
+  Сейчас разберём его <b>по частям, в том порядке, в котором части идут в файле</b>.
+  Читай фрагмент, потом таблицу под ним, потом переходи к следующему куску.
+  Разбираться в готовом тексте целиком, ничего не понимая, — бесполезно.
+</div>
+
+<h3>4.1. Что делает наш API</h3>
+<p>У нас одно «окно», в которое можно постучаться:</p>
+<table>
+  <tr><th>Метод</th><th>Адрес</th><th>Что возвращает</th><th>Код</th></tr>
+  <tr><td>GET</td><td><code>/api/notes</code></td><td>Все заметки, обработанные</td><td>200</td></tr>
+  <tr><td>GET</td><td><code>/api/notes?id_user=1</code></td><td>Заметки только пользователя №1</td><td>200</td></tr>
+  <tr><td>GET</td><td><code>/api/notes?id_user=abc</code></td><td><code>{"error": "..."}</code></td><td>400</td></tr>
+  <tr><td>GET</td><td><code>/api/notes?id_user=…</code> при сбое базы</td><td><code>{"error": "..."}</code></td><td>500</td></tr>
+</table>
+
+<div class="frag">
+  <div class="frag-title">Фрагмент 1. Импорты — строки 1–5</div>
+<pre><code>import sqlite3
+
+from fastapi import *
+from fastapi.responses import JSONResponse
+from sqlite_utils import Database</code></pre>
+<table>
+  <tr><th>Строка</th><th>Что делает</th></tr>
+  <tr><td><code>import sqlite3</code></td><td>Подключает встроенную библиотеку Python для работы с файлами баз SQLite. Отдельно устанавливать не нужно — она входит в Python</td></tr>
+  <tr><td><code>from fastapi import *</code></td><td>Приносит из библиотеки FastAPI всё нужное: класс <code>FastAPI</code> (само приложение) и функцию <code>Query</code> (чтение параметров из адреса)</td></tr>
+  <tr><td><code>from fastapi.responses import JSONResponse</code></td><td>Класс-обёртка, позволяющий <b>вручную</b> задать код ответа и содержимое. Нужен для ответов 400 и 500</td></tr>
+  <tr><td><code>from sqlite_utils import Database</code></td><td>Библиотека-помощник <code>sqlite-utils</code>: даёт удобный метод <code>.query()</code>, который выполняет SQL и возвращает строки</td></tr>
+</table>
+<p class="muted">Пустая строка после <code>import sqlite3</code> — просто для читаемости.
+Она ничего не делает. Так принято: сначала «стандартные» библиотеки Python, потом
+сторонние.</p>
+</div>
+
+<div class="frag">
+  <div class="frag-title">Фрагмент 2. Создание приложения и подключение к базе — строки 7–8</div>
+<pre><code>app = FastAPI()
+db = Database(sqlite3.connect("notes.db", check_same_thread=False))</code></pre>
+<ul>
+  <li><code>app = FastAPI()</code> — создаётся объект приложения. Именно в него
+      «вкладываются» все маршруты. В конце файла он передаётся uvicorn'у.
+      Всё приложение — это одна переменная <code>app</code>.</li>
+  <li><code>sqlite3.connect("notes.db", ...)</code> — открывает файл базы
+      <code>notes.db</code>. Файл ищется <b>рядом с программой</b>, то есть в папке
+      проекта. Если файла нет — SQLite молча создаст пустой (и потом всё сломается
+      с ошибкой <code>no such table</code>).</li>
+  <li><code>check_same_thread=False</code> — важный флаг. По умолчанию Python запрещает
+      обращаться к одному соединению SQLite из разных потоков, а веб-сервер обрабатывает
+      запросы в разных потоках. Флаг снимает этот запрет. Про эту настройку часто
+      спрашивают на защите.</li>
+  <li><code>Database(...)</code> — оборачивает соединение в объект sqlite-utils.
+      Дальше используется <code>db.query(...)</code>.</li>
+</ul>
+</div>
+
+<div class="frag">
+  <div class="frag-title">Фрагмент 3. Декоратор и объявление функции — строки 10–12</div>
+<pre><code>@app.get("/api/notes")
+def get_notes(id_user: str | None = Query(None)):
+    """Список заметок. 200 — ок, 400 — плохой параметр, 500 — сбой сервера."""</code></pre>
+<p>Строка, начинающаяся со знака <code>@</code>, называется <b>декоратором</b>. Она
+буквально говорит FastAPI:</p>
+<div class="callout ok">
+  «Когда придёт запрос методом <b>GET</b> на адрес <b>/api/notes</b> — вызови функцию,
+  которая объявлена прямо под этой строкой, и то, что она вернёт, отправь клиенту».
+</div>
+<p>Обрати внимание: путь начинается со слэша, и <b>регистр букв важен</b>.
+<code>/api/notes</code> и <code>/API/Notes</code> — это два разных адреса.</p>
+<p>Третья строка — <b>строка-документация</b> (docstring). Это текст в тройных кавычках,
+который ничего не выполняет, а просто описывает функцию: «список заметок, коды 200,
+400, 500». Она <b>обязана</b> стоять первой строкой внутри функции, до любого кода.
+Если поставить её после кода — это уже не документация, а просто строка, которую
+интерпретатор проигнорирует.</p>
+</div>
+
+<div class="frag">
+  <div class="frag-title">Фрагмент 4. Параметр функции — правая часть строки 11</div>
+<pre><code>id_user: str | None = Query(None)</code></pre>
+<table>
+  <tr><th>Часть записи</th><th>Что означает</th></tr>
+  <tr><td><code>id_user</code></td><td>Имя параметра. Именно его надо писать в адресе: <code>?id_user=1</code></td></tr>
+  <tr><td><code>: str | None</code></td><td>Подсказка типов: «здесь будет либо строка, либо ничего». Вертикальная черта — «или»</td></tr>
+  <tr><td><code>= Query(None)</code></td><td>«Возьми значение из строки адреса; если параметра в адресе нет — подставь <code>None</code> (= ничего)»</td></tr>
+</table>
+<div class="callout warn">
+  <b>ПОЧЕМУ СТРОКА, А НЕ ЧИСЛО.</b> Параметр объявлен типом <code>str</code>, поэтому
+  FastAPI отдаёт его как есть. Если бы стояло <code>: int</code>, FastAPI <b>сам</b>
+  вернул бы ошибку 422 на текст <code>abc</code> — а нам нужен код <b>400</b> по заданию.
+  Поэтому автор кода проверяет параметр вручную. <b>Не меняй тип</b> на <code>int</code>,
+  иначе получишь 422 вместо 400 и потеряешь баллы.
+</div>
+</div>
+
+<div class="frag">
+  <div class="frag-title">Фрагмент 5. Проверка параметра и ответ 400 — строки 13–14</div>
+<pre><code>    if id_user and not id_user.isdigit():
+        return JSONResponse(status_code=400, content={"error": "Параметр id_user должен быть целым числом"})</code></pre>
+<p>Читается по-русски так: <b>«если параметр вообще передан (он не пустой и не None)
+И при этом он не состоит из одних цифр — верни ошибку»</b>.</p>
+<table>
+  <tr><th>Запись</th><th>Смысл</th></tr>
+  <tr><td><code>id_user</code></td><td>«параметр передан и не пустой». Пустая строка <code>""</code> и <code>None</code> в Python считаются ложью, поэтому условие «сработает только если что-то пришло»</td></tr>
+  <tr><td><code>.isdigit()</code></td><td>Встроенный метод строки: <code>True</code>, если в строке <b>только цифры 0–9</b></td></tr>
+  <tr><td><code>not ...</code></td><td>«наоборот». Было <code>True</code> — стало <code>False</code></td></tr>
+  <tr><td><code>return JSONResponse(...)</code></td><td>Выход из функции с ответом 400 и телом <code>{"error": "..."}</code></td></tr>
+</table>
+<p>Как ведёт себя <code>isdigit()</code> на разных значениях:</p>
+<table>
+  <tr><th>Значение параметра</th><th><code>isdigit()</code></th><th>Что произойдёт</th></tr>
+  <tr><td><code>?id_user=1</code></td><td><b>True</b></td><td>Проверка не срабатывает, идём дальше к базе</td></tr>
+  <tr><td><code>?id_user=001</code></td><td><b>True</b></td><td>Тоже пойдёт дальше, ноль в начале не мешает</td></tr>
+  <tr><td><code>?id_user=abc</code></td><td>False</td><td>Ошибка 400</td></tr>
+  <tr><td><code>?id_user=12abc</code></td><td>False</td><td>Ошибка 400</td></tr>
+  <tr><td><code>?id_user=1.5</code></td><td>False</td><td>Ошибка 400: точка не цифра</td></tr>
+  <tr><td><code>?id_user=-1</code></td><td>False</td><td>Ошибка 400: минус не цифра</td></tr>
+  <tr><td>параметра нет вовсе</td><td>—</td><td>Проверка пропускается: <code>id_user</code> пустой, условие ложное</td></tr>
+</table>
+</div>
+
+<div class="frag">
+  <div class="frag-title">Фрагмент 6. Команда <code>try</code> и сборка SQL-запроса — строки 16–24</div>
+<pre><code>    try:
+        sql = """
+            SELECT * FROM notes
+            JOIN users ON users.id = notes.id_user
+        """
+        if id_user:
+            sql += f"""WHERE notes.id_user = {int(id_user)}"""</code></pre>
+<ul>
+  <li><code>try:</code> — начало «охраняемой зоны». Всё, что идёт ниже с отступом,
+      находится под наблюдением: если внутри что-то сломается, мы это поймаем.
+      Подробно разберём в фрагменте 8.</li>
+  <li>Тройные кавычки <code>"""..."""</code> позволяют записать текст в несколько
+      строк — так SQL читается глазами.</li>
+  <li><code>SELECT * FROM notes</code> — «выбери <b>все колонки</b> из таблицы
+      <code>notes</code>». Звёздочка означает «все колонки».</li>
+  <li><code>JOIN users ON users.id = notes.id_user</code> — <b>соединение двух
+      таблиц</b>. <code>JOIN</code> говорит: «возьми каждую заметку и найди
+      пользователя, чей <code>id</code> совпадает с <code>notes.id_user</code>;
+      верни обе строки вместе». Без <code>JOIN</code> в ответе не было бы логина,
+      и поле <code>title_user</code> собрать было бы не из чего.</li>
+  <li><code>if id_user:</code> — если параметр передан, дописываем <code>WHERE</code>.
+      Если не передан — фильтра нет, вернутся все заметки.</li>
+  <li><code>sql += ...</code> — оператор <code>+=</code> дописывает текст в конец
+      переменной <code>sql</code>. Получится два склеенных куска:
+      <code>SELECT ... JOIN ... WHERE notes.id_user = 1</code>.</li>
+  <li><code>f"""..."""</code> — <b>f-строка</b>: всё, что в фигурных скобках, заменяется
+      на значение. Здесь <code>{int(id_user)}</code> превращает строку
+      <code>"001"</code> в число <code>1</code>.</li>
+  <li>Значение подставляется <b>только после проверки</b> <code>isdigit()</code>. Это
+      защита от SQL-инъекции: злоумышленник не сможет прислать <code>1 OR 1=1</code>,
+      потому что такая строка не пройдёт проверку и получит 400.</li>
+</ul>
+<div class="callout warn">
+  <b>МЕЛКАЯ ДЕТАЛЬ, КОТОРАЯ РАБОТАЕТ.</b> В обеих таблицах есть колонка с именем
+  <code>id</code>, а <code>SELECT *</code> просит все колонки из обеих таблиц. SQLite
+  отдаёт сначала колонки из <code>notes</code>, потом из <code>users</code>, и при
+  чтении по имени <code>row['id']</code> берётся <b>первая</b> — то есть
+  <code>notes.id</code>. Нам нужен именно номер заметки, поэтому всё работает правильно.
+  Запоминать это не обязательно: просто если однажды ответ начнёт путать номера —
+  перечисли колонки явно:
+  <code>SELECT notes.id, notes.title, notes.content, notes.created_at, users.login</code>.
+</div>
+</div>
+
+<div class="frag">
+  <div class="frag-title">Фрагмент 7. Выполнение запроса и обработка данных — строки 26–38</div>
+<pre><code>        rows = db.query(sql)
+
+        resp_arr = []
+        for row in rows:
+            resp_arr.append(
+                {
+                    "id": f"{row['id']:05d}",
+                    "title_user": f"{row['title']} - {row['login']}",
+                    "content": row["content"],
+                    "formatted_date": row["created_at"]
+                }
+            )
+        return resp_arr</code></pre>
+<p>Это <b>самое главное место работы</b>. Здесь выполняется требование
+«данные не должны выдаваться в исходном виде».</p>
+<ul>
+  <li><code>rows = db.query(sql)</code> — sqlite-utils выполняет запрос и возвращает
+      набор строк.</li>
+  <li><code>resp_arr = []</code> — создаём <b>пустой список</b>. В него будем складывать
+      готовые словари. Имя читается как «response array» — «массив для ответа».</li>
+  <li><code>for row in rows:</code> — цикл: берём по одной строке из результата запроса.
+      <code>row</code> — это одна строка таблицы.</li>
+  <li><code>resp_arr.append({...})</code> — добавляем в список новый <b>словарь</b>
+      с четырьмя ключами. <code>append</code> по-английски «добавить в конец».</li>
+  <li><code>return resp_arr</code> — список словарей автоматически превратится в
+      JSON-массив и уедет клиенту.</li>
+</ul>
+
+<h4>Как получается «обработанный» ответ</h4>
+<table>
+  <tr><th>Что взяли из базы</th><th>Что получил клиент</th><th>В чём обработка</th></tr>
+  <tr>
+    <td><code>notes.id</code> = <code>1</code> (число)</td>
+    <td><code>"id": "00001"</code> (строка)</td>
+    <td>Число превращено в строку и дополнено нулями до 5 знаков. Формат <code>05d</code>.
+        <code>f"{1:05d}"</code> даёт <code>"00001"</code></td>
+  </tr>
+  <tr>
+    <td><code>notes.title</code> + <code>users.login</code><br>(две разные колонки)</td>
+    <td><code>"title_user": "Конференция ИТ - user25"</code></td>
+    <td>Две колонки склеены в одну через разделитель «пробел, дефис, пробел».
+        Пробелы вокруг дефиса обязательны</td>
+  </tr>
+  <tr>
+    <td><code>notes.content</code></td>
+    <td><code>"content": "Содержимое заметки"</code></td>
+    <td>Значение берётся как есть, но с новым, «чистым» именем поля</td>
+  </tr>
+  <tr>
+    <td><code>notes.created_at</code></td>
+    <td><code>"formatted_date": "03.02.2027"</code></td>
+    <td>Поле переименовано. Само значение не меняется — значит, в базе оно
+        <b>уже должно</b> быть в формате ДД.ММ.ГГГГ (см. раздел 3.3)</td>
+  </tr>
+</table>
+<div class="callout ok">
+  <b>ПОДВЕДЁМ ИТОГ ТРЁХ ПОЛЕЙ.</b> Поле <code>id</code> — мы сами превратили число в
+  строку из пяти цифр. Поле <code>title_user</code> — мы сами склеили две колонки.
+  Поле <code>content</code> — просто переименовали ключ. Поле <code>formatted_date</code>
+  — переименовали ключ, а за формат отвечает база. Все четыре правила задания
+  выполнены.
+</div>
+</div>
+
+<div class="frag">
+  <div class="frag-title">Фрагмент 8. Обработка ошибок: <code>except</code> и ответ 500 — строки 40–45</div>
+<pre><code>    except Exception as error:
+            print("ОШИБКА при работе с базой данных:", error)
+            return JSONResponse(
+                status_code=500,
+                content={"error": "Ошибка подключения к базе данных"},
+            )</code></pre>
+<p>Читается буквально так: <b>«попробуй выполнить блок <code>try</code> сверху; если
+внутри что-нибудь пойдёт не так — не падай, а выполни вот это»</b>.</p>
+<table>
+  <tr><th>Слово</th><th>Что означает</th></tr>
+  <tr><td><code>except Exception as error:</code></td><td>«Поймай любую ошибку и положи её в переменную <code>error</code>». <code>Exception</code> — общий предок всех ошибок Python</td></tr>
+  <tr><td><code>print(...)</code></td><td>Печатает текст ошибки <b>в терминал</b>, где запущен uvicorn. Клиент этого не видит — сообщение только для тебя, для отладки</td></tr>
+  <tr><td><code>status_code=500</code></td><td>Тот самый код ответа, который требуется по заданию</td></tr>
+  <tr><td><code>content={"error": ...}</code></td><td>Тело ответа. По заданию оно обязано содержать сообщение об ошибке</td></tr>
+</table>
+<div class="callout warn">
+  <b>ПОЧЕМУ В <code>content</code> ОБЩИЙ ТЕКСТ, А НЕ ПОДРОБНОСТИ.</b> Сервер никогда не
+  должен отдавать клиенту «сырое» сообщение об ошибке: в нём могут быть имена таблиц,
+  пути к файлам и другая внутренняя информация. Клиенту — понятное общее сообщение,
+  разработчику — подробности в консоль. Именно так и сделано: в ответе
+  <code>"Ошибка подключения к базе данных"</code>, а в терминале, например,
+  <code>no such table: notes</code>.
+</div>
+<div class="callout ok">
+  <b>КОГДА ЭТОТ БЛОК СРАБОТАЕТ.</b> Например: файл <code>notes.db</code> переименован
+  или удалён; в базе нет таблицы <code>notes</code>; в параметре пришёл символ, который
+  проходит <code>isdigit()</code>, но ломает <code>int()</code>. В любом из этих случаев
+  вместо непонятной ошибки клиент получит аккуратный JSON с кодом 500.
+</div>
+</div>
+
+<div class="frag">
+  <div class="frag-title">Фрагмент 9. Блок запуска — последние строки файла</div>
+<pre><code>if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="127.0.0.1", port=8000)</code></pre>
+<ul>
+  <li><code>if __name__ == "__main__":</code> — «выполни вот это только если файл
+      запущен напрямую, а не импортирован другой программой».</li>
+  <li><code>import uvicorn</code> — импорт стоит здесь, а не сверху, просто для порядка:
+      сервер нужен только при запуске файла.</li>
+  <li><code>uvicorn.run(app, ...)</code> — запускает сервер. <code>app</code> — та самая
+      переменная из фрагмента 2.</li>
+  <li><code>host="127.0.0.1"</code> — принимать запросы только с этого компьютера.</li>
+  <li><code>port=8000</code> — «дверь» номер 8000. Это число понадобится в Postman.</li>
+</ul>
+</div>
+
+<h3>4.11. Соберём всё вместе: полный код файла <code>app.py</code></h3>
+<p>Теперь, когда каждая часть разобрана, вот как выглядит файл целиком. Создай в папке
+проекта файл <code>app.py</code> и вставь в него это:</p>
+
+<pre><code>import sqlite3
+
+from fastapi import *
+from fastapi.responses import JSONResponse
+from sqlite_utils import Database
+
+app = FastAPI()
+db = Database(sqlite3.connect("notes.db", check_same_thread=False))
+
+@app.get("/api/notes")
+def get_notes(id_user: str | None = Query(None)):
+    """Список заметок. 200 — ок, 400 — плохой параметр, 500 — сбой сервера."""
+    if id_user and not id_user.isdigit():
+        return JSONResponse(status_code=400, content={"error": "Параметр id_user должен быть целым числом"})
+
+    try:
+        sql = """
+            SELECT * FROM notes
+            JOIN users ON users.id = notes.id_user
+        """
+        if id_user:
+            sql += f"""WHERE notes.id_user = {int(id_user)}"""
+        
+        rows = db.query(sql)
+        
+        resp_arr = []
+        for row in rows:
+            resp_arr.append(
+                {
+                    "id": f"{row['id']:05d}", 
+                    "title_user": f"{row['title']} - {row['login']}", 
+                    "content": row["content"],
+                    "formatted_date": row["created_at"]
+                }
+            )
+        return resp_arr
+
+    except Exception as error:
+            print("ОШИБКА при работе с базой данных:", error)
+            return JSONResponse(
+                status_code=500,
+                content={"error": "Ошибка подключения к базе данных"},
+            )
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="127.0.0.1", port=8000)</code></pre>
+
+<div class="callout warn">
+  <b>ОТСТУПЫ — ЭТО ЧАСТЬ КОДА.</b> Убедись, что файл сохранён именно с такими отступами.
+  Если редактор «съест» пробелы в начале строк или заменит их на другие символы, Python
+  выдаст <code>IndentationError</code>. Самый надёжный способ — открыть
+  <code>app.py</code> в VS Code: там отступы видны как пунктирные линии, и
+  <code>Tab</code> не смешивается с пробелами.
+</div>
+
+<h3>4.12. Итоговая таблица: что проверяет автотест</h3>
+<table>
+  <tr><th>Требование задания</th><th>Где в коде выполняется</th><th>Статус</th></tr>
+  <tr><td>Эндпоинт <code>GET /api/notes</code></td><td>Фрагмент 3, декоратор</td><td class="yes">✔</td></tr>
+  <tr><td>Данные не выдаются в исходном виде</td><td>Фрагмент 7, словарь из четырёх ключей</td><td class="yes">✔</td></tr>
+  <tr><td><code>id</code> — строка из 5 цифр</td><td>Фрагмент 7, <code>{row['id']:05d}</code></td><td class="yes">✔</td></tr>
+  <tr><td><code>title_user</code> = «title - login»</td><td>Фрагмент 7, f-строка с дефисом</td><td class="yes">✔</td></tr>
+  <tr><td><code>content</code> передаётся без изменений</td><td>Фрагмент 7, <code>row["content"]</code></td><td class="yes">✔</td></tr>
+  <tr><td><code>formatted_date</code> в формате ДД.ММ.ГГГГ</td><td>Фрагмент 7 + <b>формат даты в базе</b> (раздел 3.3)</td><td class="yes">✔</td></tr>
+  <tr><td>Некорректный запрос → 400</td><td>Фрагмент 5</td><td class="yes">✔</td></tr>
+  <tr><td>Данные не найдены → 200 и пустой массив</td><td>Фрагмент 7: список остаётся пустым и возвращается как <code>[]</code></td><td class="yes">✔</td></tr>
+  <tr><td>Внутренняя ошибка → 500 и JSON с <code>error</code></td><td>Фрагмент 8, <code>except</code></td><td class="yes">✔</td></tr>
+</table>
+
+<!-- ============================================================= -->
+<h2>5. Практика, этап 1: запускаем API</h2>
+
+<div class="step">Шаг 1. Папка проекта и виртуальное окружение</div>
+<p>Создай папку без пробелов и русских букв в имени, например
+<code>C:\work\module5_api</code>. Открой её в терминале (в VS Code:
+меню <b>Терминал → Новый терминал</b>).</p>
+<p>Создай виртуальное окружение — это изолированная «мини-копия» Python для одного
+проекта. Делается <b>один раз</b>:</p>
+<pre><code>python -m venv venv</code></pre>
+<p>Активируй его — это делается <b>каждый раз</b> перед работой:</p>
+<pre><code>venv\Scripts\activate          :: Windows (cmd)
+venv\Scripts\Activate.ps1      :: Windows (PowerShell)
+source venv/bin/activate       :: Linux и macOS</code></pre>
+<div class="callout ok">
+  <b>КАК ПОНЯТЬ, ЧТО ОКРУЖЕНИЕ АКТИВНО.</b> В начале строки терминала появится метка
+  <code>(venv)</code>:
+<pre style="margin-top:8px"><code>(venv) C:\work\module5_api&gt;</code></pre>
+Если метки нет — библиотеки будут ставиться «не туда», и при запуске появится
+<code>ModuleNotFoundError</code>.
+</div>
+
+<div class="step">Шаг 2. Установка библиотек</div>
+<p>В активированном окружении выполни одну команду:</p>
+<pre><code>pip install fastapi uvicorn sqlite-utils</code></pre>
+<table>
+  <tr><th>Библиотека</th><th>Зачем</th></tr>
+  <tr><td><code>fastapi</code></td><td>Фреймворк, в котором мы объявляем маршруты API</td></tr>
+  <tr><td><code>uvicorn</code></td><td>Сервер, который «оживляет» приложение и принимает запросы</td></tr>
+  <tr><td><code>sqlite-utils</code></td><td>Помощник для работы с SQLite: метод <code>Database.query()</code></td></tr>
+</table>
+<p>Проверь, что всё встало:</p>
+<pre><code>pip list</code></pre>
+<p>В списке должны быть <code>fastapi</code>, <code>uvicorn</code>, <code>sqlite-utils</code>.</p>
+
+<div class="step">Шаг 3. Файлы в папке проекта</div>
+<p>К этому моменту в папке должно лежать:</p>
+<pre><code>module5_api\
+├── venv\            ← виртуальное окружение (создано в шаге 1)
+├── notes.db         ← база данных (создана в разделе 3)
+├── create_db.sql    ← SQL-скрипт (тоже создан в разделе 3)
+└── app.py           ← код API (создан в разделе 4.11)
+</code></pre>
+<div class="callout warn">
+  <b>ФАЙЛ <code>notes.db</code> ДОЛЖЕН ЛЕЖАТЬ РЯДОМ С <code>app.py</code>.</b> Не в
+  подпапке, не на рабочем столе. Если он в другом месте, при первом же запросе
+  появится <code>sqlite3.OperationalError: no such table: notes</code>.
+</div>
+
+<div class="step">Шаг 4. Запуск сервера</div>
+<p>В активированном окружении выполни:</p>
+<pre><code>python app.py</code></pre>
+<p>В терминале появится примерно такое:</p>
+<pre><code>INFO:     Started server process [12345]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+</code></pre>
+<div class="callout ok">
+  <b>СЕРВЕР РАБОТАЕТ.</b> Строка <code>Uvicorn running on http://127.0.0.1:8000</code> —
+  доказательство. Терминал <b>не закрывай</b>: закрыл — сервер остановился.
+  Остановить сервер вручную: <code>Ctrl+C</code> в терминале.
+</div>
+
+<div class="step">Шаг 5. Проверка через браузер</div>
+<p>Открой браузер и введи в адресную строку:</p>
+<pre><code>http://127.0.0.1:8000/api/notes</code></pre>
+<p>Браузер покажет JSON. <b>Проверь в ответе две вещи:</b> что <code>id</code> выглядит
+как <code>"00001"</code> и что в дате стоят <b>точки</b>, а не дефисы. Если так —
+самое главное сделано.</p>
+<p>Теперь попробуй с параметром:</p>
+<pre><code>http://127.0.0.1:8000/api/notes?id_user=2</code></pre>
+<p>И проверь ошибку:</p>
+<pre><code>http://127.0.0.1:8000/api/notes?id_user=abc</code></pre>
+<p>Красивую страницу с описанием всех методов FastAPI делает сам — она открывается по
+адресу <code>http://127.0.0.1:8000/docs</code>. Там же есть кнопка <b>Try it out</b>,
+которая отправляет запрос прямо из браузера. Покажи этот экран комиссии: API
+самодокументируется, и это пригодится в модуле 6.</p>
+
+<h2>6. Практика, этап 2: знакомство с Postman</h2>
+
+<div class="callout ok">
+  <b>ЧТО БУДЕТ В КОЛЛЕКЦИИ.</b> Готовая коллекция содержит ровно <b>4 запроса</b> —
+  по одному на каждую ситуацию, которую требует задание. Никаких «лишних» проверок
+  «для красоты» в ней нет: только то, за что ставят баллы. Если попросят объяснить
+  выбор запросов — так и говори: «каждый запрос проверяет одну строку из списка
+  ситуаций в задании».
+</div>
+
+<div class="step">Шаг 6. Установка и запуск Postman</div>
+<ol>
+  <li>Postman должен быть предустановлен на рабочем месте экзамена. Найди его через
+      меню «Пуск» — иконка оранжевого круга.</li>
+  <li>При первом запуске Postman может предложить войти в аккаунт — нажми
+      <b>Skip and go to the app</b> (или <b>Continue without signing in</b>).
+      Для экзамена интернет и аккаунт <b>не нужны</b>.</li>
+  <li>Слева появится панель с деревом коллекций. Если она свёрнута — нажми значок
+      <b>Collections</b> на вертикальной панели слева.</li>
+</ol>
+
+<div class="step">Шаг 7. Первый запрос вручную</div>
+<p>Сделаем самый простой запрос, чтобы понять, как всё устроено.</p>
+<ol>
+  <li>Нажми кнопку <b>New</b> (или <b>+</b>) — откроется вкладка нового запроса.</li>
+  <li>Слева от адресной строки находится <b>выпадающий список метода</b>. Убедись, что
+      там стоит <b>GET</b>.</li>
+  <li>В адресную строку введи: <code>http://127.0.0.1:8000/api/notes</code></li>
+  <li>Нажми синюю кнопку <b>Send</b>.</li>
+  <li>Внизу появится ответ. Вкладка <b>Body</b> → переключатель <b>Pretty</b> →
+      <b>JSON</b> — так ответ будет красиво отформатирован.</li>
+</ol>
+<div class="callout warn">
+  <b>ЕСЛИ ПОЯВИЛАСЬ ОШИБКА.</b> Сообщение
+  <code>Could not send request · Error: connect ECONNREFUSED 127.0.0.1:8000</code>
+  означает ровно одно: <b>сервер не запущен</b>. Вернись в терминал (Шаг 4),
+  запусти <code>python app.py</code> и повтори запрос. Это самая частая проблема
+  на экзамене.
+</div>
+
+<div class="step">Шаг 8. Импорт готовой коллекции</div>
+<ol>
+  <li>Сохрани файл <code>postman_collection.json</code> на компьютер
+      (например, в папку проекта).</li>
+  <li>В Postman нажми кнопку <b>Import</b> — она слева сверху, рядом с кнопкой
+      <b>New</b>.</li>
+  <li>Перетащи файл <code>postman_collection.json</code> в открывшееся окно мышкой
+      (или нажми <b>files</b> и выбери его).</li>
+  <li>Нажми <b>Import</b> внизу окна.</li>
+  <li>В панели <b>Collections</b> слева появится коллекция
+      <b>«Модуль 5 — API заметок»</b>. Раскрой её — внутри четыре папки и четыре
+      запроса.</li>
+</ol>
+<div class="callout ok">
+  <b>КАК УСТРОЕНА КОЛЛЕКЦИЯ.</b> Каждый запрос лежит в <b>своей папке</b>, и название
+  папки сразу говорит, что мы проверяем:
+<pre style="margin-top:8px"><code>Модуль 5 — API заметок
+├── 01. Успешный ответ (200)          ← запрос 1.1
+├── 02. Некорректный запрос (400)     ← запрос 2.1
+├── 03. Данные не найдены (200 + [])  ← запрос 3.1
+└── 04. Внутренняя ошибка (500)       ← запрос 4.1</code></pre>
+  Такое деление — прямое отражение списка ситуаций из задания.
+</div>
+
+<div class="step">Шаг 9. Настройка переменной <code>baseUrl</code></div>
+<p>Внутри коллекции адреса записаны так: <code>{{baseUrl}}/api/notes</code>. Двойные
+фигурные скобки — это <b>переменная</b>. Это удобно: если порт изменится, поменять
+придётся <b>одно место</b>, а не четыре запроса.</p>
+<ol>
+  <li>Нажми на название коллекции левой кнопкой — она откроется.</li>
+  <li>Перейди на вкладку <b>Variables</b> (рядом с Overview, Authorization, Scripts).</li>
+  <li>В таблице найди строку <code>baseUrl</code>. Значение должно быть
+      <code>http://127.0.0.1:8000</code>.</li>
+  <li>Если у тебя другой порт — впиши свой в столбик <b>Current value</b> и нажми
+      <b>Save</b> (<code>Ctrl+S</code>).</li>
+</ol>
+<div class="callout warn">
+  <b>ПОРТ ВАЖЕН.</b> В <code>app.py</code> написано <code>port=8000</code>. Если
+  поменять это число в коде, его же надо поменять и в переменной
+  <code>baseUrl</code>, иначе Postman будет стучаться не в ту дверь.
+</div>
+
+<div class="step">Шаг 10. Карта запросов в коллекции</div>
+<p>В коллекции <b>всего четыре запроса</b>. Каждый закрывает одну ситуацию из задания.</p>
+<table>
+  <tr>
+    <th>№</th>
+    <th>Запрос</th>
+    <th>Что проверяет</th>
+    <th>Код</th>
+    <th>Пункт задания</th>
+  </tr>
+  <tr>
+    <td><b>1.1</b></td>
+    <td><code>GET /api/notes</code></td>
+    <td>Успешный список. Проверяются: структура полей (<code>id</code>,
+        <code>title_user</code>, <code>content</code>, <code>formatted_date</code>);
+        формат <code>id</code> — строка из 5 цифр; формат даты — ДД.ММ.ГГГГ;
+        «данные не в исходном виде»; валидность JSON</td>
+    <td>200</td>
+    <td>п. 2.2 и п. 4 (тесты 200 и JSON)</td>
+  </tr>
+  <tr>
+    <td><b>2.1</b></td>
+    <td><code>GET /api/notes?id_user=abc</code></td>
+    <td>Некорректный параметр (буквы вместо числа) → код 400 и тело
+        <code>{"error": "..."}</code></td>
+    <td>400</td>
+    <td>п. 3, стр. 1</td>
+  </tr>
+  <tr>
+    <td><b>3.1</b></td>
+    <td><code>GET /api/notes?id_user=999999</code></td>
+    <td>Запрашиваем несуществующего пользователя. Сервер обязан вернуть код 200 и
+        <b>пустой массив <code>[]</code></b> — это не ошибка</td>
+    <td>200</td>
+    <td>п. 3, стр. 2</td>
+  </tr>
+  <tr>
+    <td><b>4.1</b></td>
+    <td><code>GET /api/notes?id_user=²</code></td>
+    <td>Искусственно ломаем сервер надстрочным символом «²» — он проходит
+        <code>isdigit()</code>, но валит <code>int()</code>. Сервер обязан вернуть
+        код 500 и JSON с ключом <code>error</code></td>
+    <td>500</td>
+    <td>п. 3, стр. 3 и п. 4 (тест 500)</td>
+  </tr>
+</table>
+<div class="callout warn">
+  <b>ПОЧЕМУ ТОЛЬКО 4, А НЕ 15.</b> В учебных коллекциях любят добавлять запросы «на
+  всякий случай»: несуществующий маршрут, неверный метод, страницу документации.
+  Задание этого <b>не требует</b>. Каждый запрос в коллекции должен закрывать свою
+  строку из требований — иначе коллекция выглядит как набор случайных проверок, а не
+  как осознанный тестовый набор.
+</div>
+
+<div class="step">Шаг 11. Запуск всей коллекции целиком</div>
+<p>Запускать 4 запроса по одному можно, но лучше сразу проверить всё —
+через <b>Collection Runner</b>.</p>
+<ol>
+  <li>Наведи курсор на название коллекции в панели слева.</li>
+  <li>Нажми три точки <b>⋯</b> → в меню выбери <b>Run collection</b>
+      (в новых версиях — <b>Run</b>).</li>
+  <li>Откроется окно настройки прогона:
+      <ul>
+        <li><b>Run order</b> — оставь <i>Run all requests in sequence</i>
+            («запустить все по порядку»);</li>
+        <li><b>Iterations</b> — <code>1</code>;</li>
+        <li><b>Delay</b> — <code>0</code>;</li>
+        <li><b>Data</b> и <b>Advanced</b> трогать не надо.</li>
+      </ul>
+  </li>
+  <li>Нажми оранжевую кнопку <b>Run ...</b>.</li>
+  <li>Postman побежит по запросам и рядом с каждым покажет:
+      <b>PASSED</b> — зелёным, <b>FAILED</b> — красным, и число пройденных тестов.</li>
+</ol>
+<div class="callout ok">
+  <b>ЧТО СЧИТАЕТСЯ УСПЕХОМ.</b> Все 4 запроса отработали, все тесты зелёные, внизу
+  итог <code>Test results: All tests passed</code>. Сделай скриншот этого экрана —
+  это лучшее подтверждение работоспособности на защите. Ожидаемые результаты по
+  запросам:
+<pre style="margin-top:8px"><code>1.1  →  200   (8 тестов зелёных)
+2.1  →  400   (4 теста зелёных)
+3.1  →  200   (5 тестов зелёных)
+4.1  →  500   (4 теста зелёных)</code></pre>
+</div>
+<div class="callout warn">
+  <b>ЕСЛИ ЧТО-ТО КРАСНОЕ.</b> Нажми на упавший запрос — справа откроется вкладка
+  <b>Test Results</b>. Там красным будет написано, какая именно проверка не прошла
+  и почему. Дальше смотри раздел <b>10. Типичные ошибки</b>.
+</div>
+
+<h2>7. Практика, этап 3: пишем тесты в Postman</h2>
+
+<p>Коллекцию ты импортировал — она уже с тестами. Но на экзамене могут попросить
+написать тест самостоятельно или объяснить, что он делает. Разберём всё по шагам.</p>
+
+<div class="step">Шаг 12. Где живут тесты</div>
+<ol>
+  <li>Открой любой запрос из коллекции, например <b>1.1</b>.</li>
+  <li>Под адресной строкой есть ряд вкладок: <b>Params</b>, <b>Authorization</b>,
+      <b>Headers</b>, <b>Body</b>, <b>Scripts</b>, <b>Settings</b>.
+      <span class="muted">В старых версиях Postman вкладка называлась <b>Tests</b>.</span></li>
+  <li>Открой <b>Scripts</b>. Ты увидишь код на JavaScript — это и есть тесты.
+      Не бойся: там много строк, но почти все построены по одной схеме
+      <code>pm.test("название", function () { ... });</code>.</li>
+  <li>После выполнения запроса результат тестов виден на вкладке
+      <b>Test Results</b> в области ответа.</li>
+</ol>
+
+<div class="step">Шаг 13. Тест №1: проверяем код ответа</div>
+<pre><code>pm.test("Статус 200 OK", function () {
+    pm.response.to.have.status(200);
+});</code></pre>
+<table>
+  <tr><th>Элемент</th><th>Что делает</th></tr>
+  <tr><td><code>pm.test("Статус 200 OK", ...)</code></td><td>Объявляет проверку с таким названием. Название — это то, что ты увидишь в отчёте</td></tr>
+  <tr><td><code>function () { ... }</code></td><td>Тело теста: код, который надо выполнить</td></tr>
+  <tr><td><code>pm.response</code></td><td>Объект «ответ сервера». В нём лежит код, время, заголовки, тело</td></tr>
+  <tr><td><code>.to.have.status(200)</code></td><td>Проверка: «код ответа должен быть 200». Если код другой — тест станет красным</td></tr>
+</table>
+<p>По аналогии: <code>pm.response.to.have.status(400)</code>,
+<code>pm.response.to.have.status(404)</code>, <code>pm.response.to.have.status(405)</code>,
+<code>pm.response.to.have.status(500)</code>.</p>
+
+<div class="step">Шаг 14. Тест №2: проверяем скорость ответа</div>
+<pre><code>pm.test("Ответ пришёл быстрее 3000 мс", function () {
+    pm.expect(pm.response.responseTime).to.be.below(3000);
+});</code></pre>
+<p><code>pm.response.responseTime</code> — время ответа в миллисекундах, его измеряет
+сам Postman. <code>.to.be.below(3000)</code> — «должно быть меньше 3000».</p>
+<div class="callout ok">
+  <b>Зачем это нужно.</b> Если запрос вдруг начнёт идти 30 секунд — значит, ты написал
+  крайне неэффективный SQL или база «тормозит». Такой тест это поймает.
+</div>
+
+<div class="step">Шаг 15. Тест №3: превращаем ответ в объект</div>
+<pre><code>const body = pm.response.json();</code></pre>
+<p>Ответ сервера приходит как <b>просто текст</b>. Чтобы обращаться к полям по именам,
+текст нужно разобрать. Метод <code>.json()</code> делает это за тебя и возвращает
+готовый объект JavaScript.</p>
+<table>
+  <tr><th>Если ответ выглядит так</th><th>После <code>pm.response.json()</code> получаем</th></tr>
+  <tr><td><code>[{...}, {...}]</code></td><td>массив → <code>body[0]</code>, <code>body.length</code></td></tr>
+  <tr><td><code>{"error": "..."}</code></td><td>объект → <code>body.error</code></td></tr>
+</table>
+<p>Слово <code>const</code> означает «объявляю переменную, которую не буду
+переприсваивать». Она доступна во всех тестах этого запроса ниже строки объявления.</p>
+
+<div class="step">Шаг 16. Тест №4: проверяем, что пришёл массив и он не пустой</div>
+<pre><code>pm.test("Тело ответа — массив", function () {
+    pm.expect(body).to.be.an("array");
+});
+
+pm.test("Массив заметок не пустой", function () {
+    pm.expect(body.length).to.be.above(0);
+});</code></pre>
+<ul>
+  <li><code>.to.be.an("array")</code> — «это должен быть массив»;</li>
+  <li><code>body.length</code> — «сколько элементов в массиве»;</li>
+  <li><code>.to.be.above(0)</code> — «больше нуля».</li>
+</ul>
+
+<div class="step">Шаг 17. Тест №5: проверяем наличие полей у каждого элемента</div>
+<pre><code>const requiredFields = ["id", "title_user", "content", "formatted_date"];
+
+pm.test("У каждой заметки есть все обязательные поля", function () {
+    body.forEach(function (item, index) {
+        requiredFields.forEach(function (field) {
+            pm.expect(item, "Заметка №" + index + ": нет поля " + field)
+              .to.have.property(field);
+        });
+    });
+});</code></pre>
+<table>
+  <tr><th>Кусок кода</th><th>Смысл</th></tr>
+  <tr><td><code>const requiredFields = [...]</code></td><td>Массив названий полей, которые обязаны быть в каждой записи</td></tr>
+  <tr><td><code>body.forEach(function (item, index) { ... })</code></td><td>«для каждого элемента массива выполни...». <code>item</code> — сам элемент, <code>index</code> — его номер (0, 1, 2...)</td></tr>
+  <tr><td><code>requiredFields.forEach(function (field) { ... })</code></td><td>Вложенный цикл: «для каждого имени поля выполни...»</td></tr>
+  <tr><td><code>pm.expect(item, "Заметка №0: нет поля id")</code></td><td>Второй аргумент — <b>пояснение</b>. Оно появится в отчёте, если тест упадёт. Ошибка без пояснения бесполезна — непонятно, какая из двадцати строк сломалась</td></tr>
+  <tr><td><code>.to.have.property(field)</code></td><td>«у объекта должно быть свойство с таким именем»</td></tr>
+</table>
+
+<div class="step">Шаг 18. Тест №6: <code>id</code> — строка из пяти цифр</div>
+<pre><code>pm.test("Поле id — строка из 5 цифр", function () {
+    body.forEach(function (item, index) {
+        pm.expect(item.id, "Заметка №" + index + ": id = " + item.id)
+          .to.match(/^\d{5}$/);
+    });
+});</code></pre>
+<p><b>Регулярное выражение</b> — это шаблон, описывающий «как должна выглядеть строка».
+Записано между косыми чертами: <code>/^\d{5}$/</code>.</p>
+<table>
+  <tr><th>Символ</th><th>Что означает</th></tr>
+  <tr><td><code>/  /</code></td><td>Границы регулярного выражения</td></tr>
+  <tr><td><code>^</code></td><td>«начало строки»</td></tr>
+  <tr><td><code>\d</code></td><td>любая цифра от 0 до 9</td></tr>
+  <tr><td><code>{5}</code></td><td>«ровно пять раз подряд»</td></tr>
+  <tr><td><code>$</code></td><td>«конец строки»</td></tr>
+</table>
+<div class="callout ok">
+  <b>Проверим на примерах.</b><br>
+  <code>"00001"</code> — 5 цифр, ничего лишнего → <b>подходит</b>.<br>
+  <code>"1"</code> — одна цифра, мало → не подходит.<br>
+  <code>"0001a"</code> — последний символ не цифра → не подходит.<br>
+  <code>"000011"</code> — шесть цифр, а <code>$</code> требует, чтобы после пятой был
+  конец строки → не подходит.<br>
+  Без <code>^</code> и <code>$</code> выражение <code>\d{5}</code> пропустило бы
+  «000011», потому что нашлись пять цифр подряд. Знаки «начало» и «конец» обязательны.
+</div>
+
+<div class="step">Шаг 19. Тест №7: <code>formatted_date</code> в формате ДД.ММ.ГГГГ</div>
+<pre><code>pm.test("formatted_date — дата в формате ДД.ММ.ГГГГ", function () {
+    body.forEach(function (item, index) {
+        pm.expect(item.formatted_date, "Заметка №" + index + ": " + item.formatted_date)
+          .to.match(/^\d{2}\.\d{2}\.\d{4}$/);
+    });
+});</code></pre>
+<p>Шаблон читается так:</p>
+<table>
+  <tr><th>Кусок шаблона</th><th>Что требует</th></tr>
+  <tr><td><code>^</code></td><td>начало строки</td></tr>
+  <tr><td><code>\d{2}</code></td><td>две цифры — день</td></tr>
+  <tr><td><code>\.</code></td><td><b>точка</b>. Обратный слэш обязателен: без него точка в шаблоне означает «любой символ», а нам нужна именно точка</td></tr>
+  <tr><td><code>\d{2}</code></td><td>две цифры — месяц</td></tr>
+  <tr><td><code>\.</code></td><td>снова точка</td></tr>
+  <tr><td><code>\d{4}</code></td><td>четыре цифры — год</td></tr>
+  <tr><td><code>$</code></td><td>конец строки — ничего лишнего после года</td></tr>
+</table>
+<div class="callout warn">
+  <b>ЭТОТ ТЕСТ ПРОВЕРЯЕТ ИМЕННО ФОРМАТ, А НЕ КОНКРЕТНУЮ ДАТУ.</b> Ему всё равно,
+  какое число в базе. Он требует только одно: две цифры, точка, две цифры, точка,
+  четыре цифры. Если тест красный — значит, в базе дата записана с дефисами или
+  с временем. Иди в DB Browser и исправь (раздел 3.7).
+</div>
+
+<div class="step">Шаг 20. Тест №8: проверяем, что данные обработаны</div>
+<pre><code>pm.test("Данные отданы в обработанном виде, а не как в базе", function () {
+    const raw = pm.response.text();
+    pm.expect(raw).to.not.include("created_at");
+    pm.expect(raw).to.not.include('"login":');
+    pm.expect(raw).to.not.include('"id_user":');
+    pm.expect(raw).to.not.include('"title":');
+});</code></pre>
+<p>Это <b>самый важный тест модуля 5</b>, потому что он проверяет главное требование
+задания.</p>
+<ul>
+  <li><code>pm.response.text()</code> — берём ответ <b>как есть, сырым текстом</b>,
+      не разбирая JSON. Так мы видим точные имена полей;</li>
+  <li><code>.to.not.include("created_at")</code> — «в ответе НЕ должно быть подстроки
+      <code>created_at</code>». В базе колонка так называется, в ответе — уже
+      <code>formatted_date</code>;</li>
+  <li><code>.to.not.include('"login":')</code> — ищем именно <code>"login":</code>
+      вместе с кавычками и двоеточием, то есть как <b>имя поля</b>. Логин как значение
+      внутри <code>title_user</code> остаётся — это не ошибка;</li>
+  <li>обратные кавычки и апострофы: если внутри строки есть кавычка <code>"</code>,
+      строку в JavaScript удобнее писать в одинарных кавычках <code>'...'</code>.</li>
+</ul>
+
+<div class="step">Шаг 21. Тест №9: проверяем код 500</div>
+<pre><code>pm.test("Статус 500 Internal Server Error", function () {
+    pm.response.to.have.status(500);
+});
+
+pm.test("Ответ — валидный JSON, а не HTML-страница ошибки", function () {
+    pm.response.to.be.json;
+    pm.expect(pm.response.headers.get("Content-Type") || "").to.include("application/json");
+});
+
+pm.test("В теле ответа есть ключ error", function () {
+    const body = pm.response.json();
+    pm.expect(body).to.have.property("error");
+    pm.expect(body.error).to.be.a("string");
+    pm.expect(body.error.length).to.be.above(0);
+});</code></pre>
+<p>Эти три теста лежат на папке <b>03. Внутренняя ошибка сервера (500)</b> и
+срабатывают после запроса 4.1.</p>
+<div class="callout warn">
+  <b>КАК ЗАСТАВИТЬ СЕРВЕР ОТДАТЬ 500.</b> Просто отправить обычный запрос нельзя: при
+  исправном сервере он даст 200. В запросе 3.1 используется <b>учебный приём</b>:
+  в параметр подставлен символ <b>«²»</b> (надстрочная двойка). Он проходит проверку
+  <code>isdigit()</code>, но ломает <code>int()</code> — ошибка попадает в
+  <code>except</code>, и сервер отдаёт 500 с телом <code>{"error": "..."}</code>.
+  <br><br>
+  Если запрос 3.1 вернул 400, а не 500 — значит, в <code>app.py</code> нет блока
+  <code>try / except</code>. Вернись к разделу 4 (фрагмент 8).
+</div>
+
+<div class="step">Шаг 22. Тест №10: валидность JSON</div>
+<pre><code>pm.test("Тело ответа успешно разбирается как JSON", function () {
+    JSON.parse(pm.response.text());
+});</code></pre>
+<p>Логика предельно простая: <code>JSON.parse</code> — стандартная функция JavaScript,
+которая <b>разбирает текст в объект</b>. Если текст сломан, функция выбрасывает
+ошибку — и <code>pm.test</code> автоматически ставит тесту <b>FAILED</b>. Если
+разобралось — тест зелёный.</p>
+<div class="callout ok">
+  <b>ПОЧЕМУ ЭТО ЧЕСТНАЯ ПРОВЕРКА.</b> Проверка валидности JSON выполняется в каждом из четырёх запросов. Так и должно быть: клиент должен уметь разобрать ответ в любом случае — и когда всё хорошо, и когда пришла ошибка.
+</div>
+
+<div class="step">Шаг 23. Тесты на папке: когда запросов много</div>
+<p>Когда это может пригодиться. Если в папке окажется несколько запросов с одинаковой проверкой — вынести проверку на папку: правый клик → Edit → вкладка Scripts. В нашей коллекции в каждой папке по одному запросу, поэтому проверки стоят прямо в запросах — это нагляднее.
+
+</p>
+<p>Поэтому в коллекции общие проверки написаны <b>один раз — на самой папке</b>:</p>
+<ol>
+  <li>Нажми правой кнопкой на папку <b>02. Ошибка 400 Bad Request</b>.</li>
+  <li>Выбери <b>Edit</b>.</li>
+  <li>Перейди на вкладку <b>Scripts</b> (или <b>Tests</b>).</li>
+  <li>Там лежит код:</li>
+</ol>
+<pre><code>pm.test("Статус 400 Bad Request", function () {
+    pm.response.to.have.status(400);
+});
+
+pm.test("Ответ — JSON с ключом error", function () {
+    const body = pm.response.json();
+    pm.expect(body).to.have.property("error");
+    pm.expect(body.error).to.be.a("string");
+    pm.expect(body.error.length).to.be.above(0);
+});</code></pre>
+<div class="callout ok">
+  <b>КАК ЭТО РАБОТАЕТ.</b> Скрипт на папке выполняется <b>после каждого</b> запроса
+  внутри этой папки. То есть для 2.1, 2.2, 2.3 и 2.4 проверки сработают все четыре раза
+  — но написаны они один раз. Это хорошая практика, её стоит упомянуть на защите.
+</div>
+
+<div class="step">Шаг 24. Шпаргалка по <code>pm.*</code></div>
+<table>
+  <tr><th>Запись</th><th>Что проверяет</th></tr>
+  <tr><td><code>pm.response.to.have.status(200)</code></td><td>Код ответа равен 200</td></tr>
+  <tr><td><code>pm.response.to.have.header("Content-Type")</code></td><td>Такой заголовок есть</td></tr>
+  <tr><td><code>pm.expect(pm.response.responseTime).to.be.below(3000)</code></td><td>Ответ пришёл быстрее 3 секунд</td></tr>
+  <tr><td><code>pm.expect(x).to.eql(5)</code></td><td>x равен 5 (строгое равенство)</td></tr>
+  <tr><td><code>pm.expect(x).to.be.above(0)</code></td><td>x больше 0</td></tr>
+  <tr><td><code>pm.expect(x).to.be.below(10)</code></td><td>x меньше 10</td></tr>
+  <tr><td><code>pm.expect(x).to.be.at.most(10)</code></td><td>x не больше 10</td></tr>
+  <tr><td><code>pm.expect(x).to.be.at.least(1)</code></td><td>x не меньше 1</td></tr>
+  <tr><td><code>pm.expect(x).to.be.an("array")</code></td><td>x — массив</td></tr>
+  <tr><td><code>pm.expect(x).to.be.a("string")</code></td><td>x — строка</td></tr>
+  <tr><td><code>pm.expect(x).to.have.property("id")</code></td><td>у x есть свойство id</td></tr>
+  <tr><td><code>pm.expect(x).to.have.lengthOf(0)</code></td><td>длина x равна 0</td></tr>
+  <tr><td><code>pm.expect(x).to.include("abc")</code></td><td>x содержит подстроку "abc"</td></tr>
+  <tr><td><code>pm.expect(x).to.not.include("abc")</code></td><td>x НЕ содержит "abc"</td></tr>
+  <tr><td><code>pm.expect(x).to.match(/^\d{5}$/)</code></td><td>x соответствует шаблону</td></tr>
+  <tr><td><code>pm.expect(x).to.have.all.keys("a","b")</code></td><td>у x ровно эти ключи и никаких других</td></tr>
+</table>
+<p>Полезный приём для отладки: <code>console.log(...)</code> печатает значение в
+<b>Postman Console</b>. Открывается сочетанием <code>Ctrl+Alt+C</code>.</p>
+<pre><code>console.log("Всего заметок:", body.length);
+console.log("Первая запись:", JSON.stringify(body[0]));</code></pre>
+
+<!-- ============================================================= -->
+<h2>8. Практика, этап 4: создаём коллекцию с нуля</h2>
+
+<p>На экзамене могут потребовать, чтобы коллекцию ты собрал <b>сам</b>, а не
+импортировал. Покажем весь путь.</p>
+
+<div class="step">Шаг 25. Создать коллекцию</div>
+<ol>
+  <li>В левой панели нажми кнопку <b>New</b> → выбери <b>Collection</b>
+      (в некоторых версиях: <b>Collections</b> → <b>+</b>).</li>
+  <li>Появится новая коллекция с именем <i>New Collection</i>.</li>
+  <li>Наведи на неё курсор → нажми <b>⋯</b> → <b>Rename</b>.</li>
+  <li>Введи название: <code>Модуль 5. API заметок</code> и нажми Enter.</li>
+</ol>
+
+<div class="step">Шаг 26. Задать переменную <code>baseUrl</code></div>
+<ol>
+  <li>Открой коллекцию, перейди на вкладку <b>Variables</b>.</li>
+  <li>В строке с галочкой введи имя: <code>baseUrl</code>.</li>
+  <li><b>Initial value</b>: <code>http://127.0.0.1:8000</code></li>
+  <li><b>Current value</b>: <code>http://127.0.0.1:8000</code></li>
+  <li><b>Save</b> (<code>Ctrl+S</code>).</li>
+</ol>
+<div class="callout warn">
+  <b>ЗАЧЕМ ДВЕ КОЛОНКИ.</b> <b>Initial</b> — значение «по умолчанию», оно сохраняется
+  в файл коллекции. <b>Current</b> — то, что используется прямо сейчас на твоём
+  компьютере. На экзамене заполняй <b>обе</b> одинаково, чтобы не запутаться.
+</div>
+
+<div class="step">Шаг 27. Создать запрос</div>
+<ol>
+  <li>Наведи на название коллекции → <b>⋯</b> → <b>Add request</b>.</li>
+  <li>Слева появится <i>New Request</i>. Переименуй: <b>Список заметок</b>.</li>
+  <li>Слева от адресной строки в выпадающем списке выбери метод <b>GET</b>.</li>
+  <li>Введи адрес: <code>{{baseUrl}}/api/notes</code></li>
+  <li>Перейди на вкладку <b>Params</b> и добавь строку, если нужен фильтр:
+      <b>Key</b> = <code>id_user</code>, <b>Value</b> = <code>1</code>.
+      Посмотри, как адрес автоматически превратился в
+      <code>{{baseUrl}}/api/notes?id_user=1</code> — это и есть «параметры запроса».</li>
+  <li>Нажми <b>Save</b> (<code>Ctrl+S</code>).</li>
+</ol>
+
+<div class="step">Шаг 28. Написать тест</div>
+<ol>
+  <li>В том же запросе открой вкладку <b>Scripts</b> (или <b>Tests</b>).</li>
+  <li>Сотри всё, что там есть, и вставь свой код. Начни с простого:</li>
+</ol>
+<pre><code>pm.test("Статус 200 OK", function () {
+    pm.response.to.have.status(200);
+});
+
+const body = pm.response.json();
+
+pm.test("Ответ — массив", function () {
+    pm.expect(body).to.be.an("array");
+});</code></pre>
+<ol start="3">
+  <li>Сохрани (<code>Ctrl+S</code>).</li>
+  <li>Нажми <b>Send</b>. В области ответа перейди на вкладку <b>Test Results</b>.
+      Ты должен увидеть два зелёных пункта.</li>
+  <li>Специально сломай тест, чтобы понять, как выглядит ошибка: поменяй
+      <code>200</code> на <code>999</code> и нажми <b>Send</b>. Увидишь красный
+      <b>FAILED</b> с пояснением. Верни <code>200</code> обратно —
+      <b>это очень полезное упражнение</b>.</li>
+</ol>
+
+<div class="step">Шаг 29. Добавить остальные запросы</div>
+<p>Повтори Шаги 27–28 для остальных трёх запросов из таблицы Шага 10 (2.1, 3.1, 4.1). Не добавляй запросы «на всякий случай» — в коллекции только то, что требует задание.</p>
+
+<div class="step">Шаг 30. Сгруппировать запросы в папки</div>
+<ol>
+  <li>Наведи на коллекцию → <b>⋯</b> → <b>Add folder</b>.</li>
+  <li>Назови папку, например <code>01. Позитивные</code>.</li>
+  <li>Перетащи нужные запросы мышкой внутрь папки.</li>
+  <li>Проверь, что порядок внутри правильный: можно перетаскивать запросы вверх-вниз.</li>
+</ol>
+
+<div class="step">Шаг 31. Экспортировать коллекцию в файл</div>
+<p>Это обязательный шаг: работу нужно сдать файлом.</p>
+<ol>
+  <li>Наведи на коллекцию → <b>⋯</b>.</li>
+  <li>Выбери <b>Export</b>.</li>
+  <li>Оставь рекомендуемый формат <b>Collection v2.1</b> и нажми <b>Export</b>.</li>
+  <li>Сохрани файл в папку проекта под именем
+      <code>postman_collection.json</code>.</li>
+</ol>
+<div class="callout ok">
+  <b>ПРОВЕРКА.</b> Открой сохранённый файл в блокноте. Внутри должен быть текст,
+  начинающийся с <code>{"info": {...</code>. Если файл пустой или открылся как
+  «непонятные символы» — экспорт не удался, попробуй ещё раз.
+</div>
+
+<!-- ============================================================= -->
+<h2>9. Что сдавать: сборка <code>project_api.zip</code></h2>
+
+<p>По заданию 5.1 нужно сдать архив с <b>тестовым набором (коллекцией запросов)</b> и
+<b>резервной копией базы данных</b>.</p>
+
+<div class="step">Шаг 32. Сделать резервную копию базы</div>
+<p><b>Способ 1 — самый простой.</b> Просто скопируй файл <code>notes.db</code> и
+переименуй копию в <code>notes_backup.db</code>. Весь файл SQLite и есть база целиком.</p>
+<p><b>Способ 2 — дамп в виде SQL-скрипта.</b> В DB Browser: меню <b>Файл</b> →
+<b>Экспорт</b> → <b>База данных в SQL-файл</b>. Получится файл <code>notes.sql</code>,
+который содержит те же команды <code>CREATE TABLE</code> и <code>INSERT INTO</code>,
+что мы писали в разделе 3. Плюс этого способа: файл читается глазами.</p>
+<div class="callout ok">
+  <b>ЧТО ЛУЧШЕ СДАТЬ.</b> Надёжнее положить в архив <b>оба</b> файла:
+  <code>notes.db</code> и <code>notes.sql</code>. Первый нужен, чтобы база сразу
+  открылась, второй — чтобы было видно структуру. Лишним он не будет.
+</div>
+
+<div class="step">Шаг 33. Собрать архив</div>
+<ol>
+  <li>Создай папку с именем <code>project_api</code>.</li>
+  <li>Положи в неё файлы:
+      <ul>
+        <li><code>postman_collection.json</code> — экспортированная коллекция;</li>
+        <li><code>notes.db</code> — копия базы данных;</li>
+        <li><code>notes.sql</code> — дамп базы (необязательно, но полезно).</li>
+      </ul>
+  </li>
+  <li>Нажми правой кнопкой на папку → <b>7-Zip</b> → <b>Добавить к архиву "project_api.zip"</b>
+      (или «Отправить → Сжатая ZIP-папка»).</li>
+  <li>Проверь: имя архива должно быть ровно <b><code>project_api.zip</code></b>,
+      расширение — <code>.zip</code>. Ошибка в имени = потерянный балл.</li>
+  <li>Открой архив двойным щелчком и убедись, что файлы внутри видны.</li>
+</ol>
+
+<div class="step">Шаг 34. Сдача в тестирующую систему</div>
+<ol>
+  <li>Прикрепи <code>project_api.zip</code> в поле задания <b>5.1</b>.</li>
+  <li>Запусти приложение <b>«API_Autotests»</b> с рабочего стола.</li>
+  <li>В поле адреса введи <code>http://localhost:8000</code>
+      (порт — <b>тот, на котором реально работает твоё API</b>).</li>
+  <li>Нажми <b>Запустить</b>.</li>
+  <li>Скопируй по очереди значения из полей <b>«Критерий №1»</b> … <b>«Критерий №10»</b>.</li>
+  <li>Вставь каждое значение в соответствующее поле задания <b>5.2 … 5.11</b>.</li>
+</ol>
+<table>
+  <tr><th>Задание</th><th>Формат ответа</th><th>Задание</th><th>Формат ответа</th></tr>
+  <tr><td>5.2</td><td><code>M5_API1-XXXXX</code></td><td>5.7</td><td><code>M5_API6-XXXXX</code></td></tr>
+  <tr><td>5.3</td><td><code>M5_API2-XXXXX</code></td><td>5.8</td><td><code>M5_API7-XXXXX</code></td></tr>
+  <tr><td>5.4</td><td><code>M5_API3-XXXXX</code></td><td>5.9</td><td><code>M5_API8-XXXXX</code></td></tr>
+  <tr><td>5.5</td><td><code>M5_API4-XXXXX</code></td><td>5.10</td><td><code>M5_API9-XXXXX</code></td></tr>
+  <tr><td>5.6</td><td><code>M5_API5-XXXXX</code></td><td>5.11</td><td><code>M5_API10-XXXXX</code></td></tr>
+</table>
+<div class="callout err">
+  <b>ВНИМАНИЕ, ЭТО ГЛАВНАЯ ЛОВУШКА МОДУЛЯ.</b> Пока открыто приложение
+  <code>API_Autotests</code>, <b>терминал с запущенным <code>app.py</code> должен
+  работать</b>. Свернул окно — ничего страшного, закрыл — автотест выдаст ошибку.
+  Если API перезапускалось, <b>перезапусти автотест заново</b>: контрольные суммы
+  считаются от живого API.
+</div>
+
+<!-- ============================================================= -->
+<h2>10. Типичные ошибки и как их читать</h2>
+
+<p>Текст ошибки читается <b>снизу вверх</b>: последняя строка — тип и суть, строки
+выше — путь к месту. Ниже самые частые случаи модуля 5.</p>
+
+<h3>10.1. Ошибки при запуске и работе с базой</h3>
+<table>
+  <tr><th>Симптом</th><th>Причина</th><th>Как исправить</th></tr>
+  <tr>
+    <td><code>ModuleNotFoundError: No module named 'fastapi'</code></td>
+    <td>Библиотека не установлена или виртуальное окружение не активировано</td>
+    <td>Проверить метку <code>(venv)</code> в терминале, затем
+        <code>pip install fastapi uvicorn sqlite-utils</code></td>
+  </tr>
+  <tr>
+    <td><code>ModuleNotFoundError: No module named 'sqlite_utils'</code></td>
+    <td>В команде установки пропущен дефис или подчёркивание неправильное</td>
+    <td>Устанавливать <code>pip install sqlite-utils</code>, а в коде писать
+        <code>from sqlite_utils import Database</code> (с подчёркиванием)</td>
+  </tr>
+  <tr>
+    <td><code>sqlite3.OperationalError: no such table: notes</code></td>
+    <td>Файл <code>notes.db</code> пустой, лежит не рядом с <code>app.py</code>,
+        либо SQL-скрипт не выполнился до конца</td>
+    <td>Открыть <code>notes.db</code> в DB Browser и проверить вкладку
+        «Структура базы данных». Если таблиц нет — выполнить скрипт из раздела 3.4 заново</td>
+  </tr>
+  <tr>
+    <td><code>sqlite3.OperationalError: no such column: id_user</code></td>
+    <td>Имя колонки в коде не совпадает с базой</td>
+    <td>Посмотреть фактические имена колонок в DB Browser и поправить SQL в
+        <code>app.py</code></td>
+  </tr>
+  <tr>
+    <td><code>no such column: login</code></td>
+    <td>Нет таблицы <code>users</code> или в ней нет колонки <code>login</code></td>
+    <td>Проверить, что таблица <code>users</code> создана и в ней есть <code>login</code></td>
+  </tr>
+  <tr>
+    <td><code>sqlite3.ProgrammingError: SQLite objects created in a thread can only be used in that same thread</code></td>
+    <td>Забыт параметр <code>check_same_thread=False</code></td>
+    <td>Писать <code>sqlite3.connect("notes.db", check_same_thread=False)</code></td>
+  </tr>
+  <tr>
+    <td><code>sqlite3.OperationalError: database is locked</code></td>
+    <td>Файл базы держит другой процесс — например, открытый DB Browser
+        с незаписанными изменениями</td>
+    <td>Закрыть DB Browser, перезапустить сервер</td>
+  </tr>
+  <tr>
+    <td>Окно терминала мигнуло и закрылось</td>
+    <td>Скорее всего ошибка синтаксиса при импорте — но текст не успел прочитаться</td>
+    <td>Запускать из терминала вручную командой <code>python app.py</code>,
+        а не двойным щелчком по файлу</td>
+  </tr>
+  <tr>
+    <td><code>IndentationError: unexpected indent</code></td>
+    <td>Отступы при копировании кода «поехали» — смешались пробелы и табуляция</td>
+    <td>Открыть файл в VS Code, выделить всё, а затем
+        «Форматировать документ» (<code>Shift+Alt+F</code>)</td>
+  </tr>
+</table>
+
+<h3>10.2. Ошибки, связанные с форматом данных</h3>
+<table>
+  <tr><th>Симптом</th><th>Причина</th><th>Как исправить</th></tr>
+  <tr>
+    <td>В ответе дата с дефисами: <code>"formatted_date": "2027-02-03"</code></td>
+    <td>В базе дата записана как <code>2027-02-03</code>. Код только переименовывает
+        поле и не меняет значение</td>
+    <td>Исправить даты в базе на формат <code>03.02.2027</code>: DB Browser →
+        «Просмотр данных» → двойной щелчок по ячейке → вписать заново → Enter →
+        <b>Записать изменения</b></td>
+  </tr>
+  <tr>
+    <td>В дате лишнее время: <code>"03.02.2027 00:00:00"</code></td>
+    <td>В ячейке вместе с датой записано время</td>
+    <td>Убрать время, оставить только <code>03.02.2027</code></td>
+  </tr>
+  <tr>
+    <td>Тест «formatted_date — дата в формате ДД.ММ.ГГГГ» красный</td>
+    <td>То же самое: формат в базе не тот</td>
+    <td>Смотреть предыдущую строку этой таблицы</td>
+  </tr>
+  <tr>
+    <td>В ответе найдено <code>created_at</code></td>
+    <td>Ключ словаря не переименован — данные уходят в исходном виде</td>
+    <td>В коде должно быть <code>"formatted_date": row["created_at"]</code> —
+        слева новое имя, справа старое. Не наоборот!</td>
+  </tr>
+  <tr>
+    <td><code>id</code> отдаётся без ведущих нулей: <code>"1"</code> вместо <code>"00001"</code></td>
+    <td>В f-строке нет формата <code>05d</code></td>
+    <td>Проверить, что написано именно <code>f"{row['id']:05d}"</code>,
+        а не <code>row['id']</code></td>
+  </tr>
+  <tr>
+    <td>Логин не попал в <code>title_user</code></td>
+    <td>В <code>JOIN</code> неверное условие связи таблиц</td>
+    <td>Проверить, что написано <code>JOIN users ON users.id = notes.id_user</code></td>
+  </tr>
+</table>
+
+<h3>10.3. Ошибки в Postman</h3>
+<table>
+  <tr><th>Симптом</th><th>Причина</th><th>Как исправить</th></tr>
+  <tr>
+    <td><code>Could not send request · ECONNREFUSED 127.0.0.1:8000</code></td>
+    <td>Сервер не запущен либо порт другой</td>
+    <td>Запустить <code>python app.py</code>, сверить порт в консоли и в переменной
+        <code>baseUrl</code></td>
+  </tr>
+  <tr>
+    <td><code>Timeout</code>, запрос идёт очень долго</td>
+    <td>База заблокирована открытым DB Browser или в коде бесконечный цикл</td>
+    <td>Закрыть DB Browser, перезапустить сервер, посмотреть консоль uvicorn</td>
+  </tr>
+  <tr>
+    <td>Тест красный: <code>expected 200 to equal 400</code></td>
+    <td>Запрос из папки «ошибка 400» на самом деле вернул 200 — значит, проверка
+        параметра не сработала</td>
+    <td>Проверить условие <code>if id_user and not id_user.isdigit()</code> в коде</td>
+  </tr>
+  <tr>
+    <td>Тест красный: <code>expected '1' to match /^\d{5}$/</code></td>
+    <td><code>id</code> отдаётся без ведущих нулей — формат <code>05d</code> не применился</td>
+    <td>Смотреть строку выше про <code>05d</code></td>
+  </tr>
+  <tr>
+    <td>Запрос 3.1 вернул 400 вместо 500</td>
+    <td>В <code>app.py</code> нет блока <code>try / except</code>, либо символ «²»
+        испортился при импорте коллекции</td>
+    <td>Проверить фрагмент 8 кода; открыть запрос 3.1 → вкладка Params → удалить
+        значение <code>id_user</code> и вставить символ «²» заново</td>
+  </tr>
+  <tr>
+    <td>Тест 1.2 падает с <code>expected ... to be at most 0</code></td>
+    <td>Запрос 1.1 не выполнялся, переменная <code>allCount</code> пустая</td>
+    <td>Запускать коллекцию целиком через <b>Collection Runner</b>, а не по одному запросу</td>
+  </tr>
+  <tr>
+    <td>Тест 1.2 «Фильтр вернул хотя бы одну заметку» падает</td>
+    <td>У пользователя с <code>id = 1</code> в вашей базе нет заметок</td>
+    <td>Это не ошибка API. Открыть базу, посмотреть реальный <code>id_user</code>
+        и поменять значение в параметре запроса</td>
+  </tr>
+  <tr>
+    <td>Все тесты зелёные, но <code>API_Autotests</code> даёт другую сумму</td>
+    <td>Порядок записей в ответе разный</td>
+    <td>Добавить <code>ORDER BY notes.id</code> в конец SQL-запроса</td>
+  </tr>
+  <tr>
+    <td>В Runner часть запросов вообще не появилась</td>
+    <td>Запрос лежит <b>вне</b> коллекции или папки</td>
+    <td>Перетащить запрос внутрь коллекции в левой панели</td>
+  </tr>
+  <tr>
+    <td>При импорте Postman пишет <code>Format not recognized</code></td>
+    <td>Файл повреждён или сохранён не тем форматом</td>
+    <td>Открыть файл в текстовом редакторе: он должен начинаться с <code>{"info"</code>.
+        Если там пусто — экспортировать заново</td>
+  </tr>
+</table>
+
+<h3>10.4. Ошибки в DB Browser</h3>
+<table>
+  <tr><th>Симптом</th><th>Причина</th><th>Как исправить</th></tr>
+  <tr>
+    <td>Выполнил скрипт, но таблиц в левом списке нет</td>
+    <td>Скрипт не выполнился: нажалась кнопка выполнения только для одной строки</td>
+    <td>Выделить весь текст <code>Ctrl+A</code>, нажать кнопку выполнения ▶ снова</td>
+  </tr>
+  <tr>
+    <td>Данные внесены, но после закрытия DB Browser их нет</td>
+    <td>Не нажата кнопка <b>Записать изменения</b> (<i>Write Changes</i>)</td>
+    <td>Всегда нажимать <code>Ctrl+S</code> или иконку дискетки после изменений</td>
+  </tr>
+  <tr>
+    <td>Скрипт упал с ошибкой «table notes already exists»</td>
+    <td>В начале скрипта нет <code>DROP TABLE IF EXISTS</code></td>
+    <td>Убедиться, что обе строки <code>DROP TABLE IF EXISTS ...</code> в скрипте есть</td>
+  </tr>
+  <tr>
+    <td>Код <code>app.py</code> выдаёт «база заблокирована»</td>
+    <td>DB Browser открыт и держит файл базы</td>
+    <td>Закрыть DB Browser перед запуском сервера</td>
+  </tr>
+</table>
+
+<!-- ============================================================= -->
+<h2>11. Задания для самостоятельной работы</h2>
+
+<p>Выполняются по порядку, каждое опирается на предыдущее. Сдаются файл
+<code>app.py</code> и файл <code>postman_collection.json</code>.</p>
+
+<table>
+  <tr><th>№</th><th>Задание</th><th>Что отрабатывается</th></tr>
+  <tr>
+    <td>1</td>
+    <td>Добавить в ответ поле <code>short_content</code> — первые 20 символов текста
+        заметки, а если текст короче — весь текст. Добавить в запрос 1.1 тест,
+        проверяющий, что длина поля не превышает 20.</td>
+    <td>Обработка строк, срезы <code>[:20]</code>, новые поля в тестах</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>Добавить в API поиск по подстроке: параметр <code>search</code>. Если он
+        передан — вернуть только заметки, у которых заголовок содержит эту подстроку.
+        Написать тесты: найденная подстрока присутствует, при мусоре — пустой массив.</td>
+    <td>Новый параметр, <code>LIKE</code> в SQL, параметризованные тесты</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>Добавить параметр <code>limit</code> — сколько записей максимум вернуть.
+        Написать тесты: <code>limit=2</code> даёт не больше двух записей,
+        <code>limit=0</code> даёт пустой массив.</td>
+    <td><code>LIMIT</code> в SQL, граничные значения в тестах</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>Добавить в API <b>самостоятельное преобразование даты</b>: чтобы в базе можно
+        было хранить <code>2027-02-03</code>, а клиент всё равно получал
+        <code>03.02.2027</code>. Подсказка: пригодится <code>datetime.strptime</code>
+        и <code>strftime("%d.%m.%Y")</code>.</td>
+    <td>Модуль <code>datetime</code>, обработка строк, тесты не нужно менять —
+        они проверяют только формат</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>Добавить новый эндпоинт <code>GET /api/notes/{id}</code> — одна заметка по
+        номеру. Для несуществующего номера вернуть 404. Написать на папку общий тест
+        «404, если заметки нет».</td>
+    <td>Параметры пути (<code>{id}</code>), тесты на уровне папки</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td>Проверить работу 500 «ручным» способом: остановить сервер, переименовать
+        <code>notes.db</code> в <code>notes.db.bak</code>, запустить сервер и отправить
+        любой запрос. Убедиться, что пришёл код 500 и JSON с ключом <code>error</code>.
+        <b>Затем вернуть файл на место.</b></td>
+    <td>Практическая проверка обработки ошибок</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td>Добавить в базу шестую заметку, но с датой в «неправильном» формате
+        (<code>2027-03-05</code>). Убедиться, что тест «formatted_date — дата в формате
+        ДД.ММ.ГГГГ» стал красным. Исправить дату и убедиться, что тест позеленел.</td>
+    <td>Понимание связи «данные в базе → результат теста»</td>
+  </tr>
+  <tr>
+    <td>8</td>
+    <td>Добавить в коллекцию переменную окружения <code>host</code> и
+        <code>port</code> отдельно, собрать <code>baseUrl</code> из них через скрипт
+        предварительного запуска.</td>
+    <td>Переменные, pre-request script</td>
+  </tr>
+</table>
+
+<!-- ============================================================= -->
+<h2>Приложение А. Полный SQL-скрипт создания базы</h2>
+
+<p>Этот текст можно копировать целиком и вставлять в DB Browser (раздел 3.5).
+Комментарии здесь короче — подробный разбор каждого шага в разделе 3.4.</p>
+
+<pre><code>DROP TABLE IF EXISTS notes;
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+    id    INTEGER PRIMARY KEY,
+    login TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE notes (
+    id         INTEGER PRIMARY KEY,
+    title      TEXT NOT NULL,
+    content    TEXT,
+    id_user    INTEGER NOT NULL REFERENCES users(id),
+    created_at TEXT
+);
+
+INSERT INTO users (id, login) VALUES
+    (1, 'admin'),
+    (2, 'user25'),
+    (3, 'ivanov'),
+    (4, 'petrova');
+
+-- ВНИМАНИЕ: дата записывается сразу в формате ДД.ММ.ГГГГ.
+-- Числа могут быть любые — важен только формат.
+INSERT INTO notes (id, title, content, id_user, created_at) VALUES
+    (1, 'Конференция ИТ',     'Содержимое заметки',                   2, '03.02.2027'),
+    (2, 'Список задач',       'Купить продукты, позвонить в банк',    1, '07.02.2027'),
+    (3, 'Отчёт за квартал',   'Подготовить отчёт для руководителя',   3, '14.02.2027'),
+    (4, 'Идеи для проекта',   'Добавить авторизацию и кэширование',   2, '21.02.2027'),
+    (5, 'Встреча с командой', 'Обсудить сроки и распределение задач', 4, '28.02.2027');
+</code></pre>
+
+<p>Проверка после выполнения:</p>
+<pre><code>SELECT notes.title, users.login, notes.created_at
+FROM notes
+JOIN users ON users.id = notes.id_user;</code></pre>
+
+<!-- ============================================================= -->
+<h2>Приложение Б. Коллекция <code>postman_collection.json</code></h2>
+
+<p>Коллекция запросов и автотестов прилагается отдельным файлом
+<code>postman_collection.json</code>. Она импортируется в Postman через кнопку
+<b>Import</b> (см. Шаг 8).</p>
+
+<div class="callout ok">
+  <b>ФАЙЛ ГОТОВ К ИСПОЛЬЗОВАНИЮ, МЕНЯТЬ ЕГО НЕ НУЖНО.</b> Все 4 запроса и 40+
+  проверок внутри уже написаны под код из раздела 4.11 и под формат данных
+  ДД.ММ.ГГГГ. Единственное, что может понадобиться поправить, — значение
+  <code>id_user</code> в запросе 1.2, если у пользователя №1 в вашей базе нет заметок.
+</div>
+
+<div class="callout warn">
+  <b>ТЕХНИЧЕСКАЯ ЗАМЕТКА ПРО JSON.</b> В файле формата JSON обратный слэш внутри строк
+  <b>удваивается</b>. Поэтому в тексте файла стоит <code>/^\\d{5}$/</code>, а в окне
+  Postman ты увидишь правильное <code>/^\d{5}$/</code>. Импортируй файл целиком, не
+  копируй фрагменты по одной строке.
+</div>
+
+<p>Если файл потерялся — собери коллекцию заново по <b>разделу 8</b>: список запросов
+дан в таблице Шага 10, а тексты тестов — в разделе 7.</p>
+
+<hr>
+<p class="muted" style="text-align:center">
+Практическая работа. Модуль 5. Интеграция программных модулей.<br>
+Демонстрационный экзамен 2027 г., специальность 09.02.07
+«Информационные системы и программирование».
+</p>
+
+</div>
+</body>
+</html>

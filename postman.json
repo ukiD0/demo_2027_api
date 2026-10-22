@@ -1,0 +1,307 @@
+{
+  "info": {
+    "_postman_id": "d5e0f1a2-7c4b-4a9e-8f10-000000000005",
+    "name": "Модуль 5 — API заметок",
+    "description": "Коллекция запросов и автотестов по Приложению 2 (Прил_5). Содержит 4 запроса — по одному на каждую ситуацию, которую требует задание.\n\nПОРЯДОК РАБОТЫ:\n1. Запустить API командой python app.py (порт 8000).\n2. Проверить переменную коллекции baseUrl = http://127.0.0.1:8000\n3. Запустить всю коллекцию через Collection Runner.\n\nОБЯЗАТЕЛЬНЫЕ ПРОВЕРКИ ПО ПРИЛ_5:\n- тест на статус 200 — папка 01;\n- тест на валидность JSON — в каждом запросе;\n- некорректный запрос (400) — папка 02;\n- данные не найдены (200 + пустой массив) — папка 03;\n- тест на статус 500 — папка 04.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01. Успешный ответ (200)",
+      "description": "Прил_5 п. 2.2 и п. 4. Два обязательных теста сразу: статус 200 и валидность JSON. Плюс проверка правил обработки данных и структуры ответа.",
+      "item": [
+        {
+          "name": "1.1 GET /api/notes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// ОБЯЗАТЕЛЬНЫЙ ТЕСТ ПРИЛ_5 (п. 4): статус 200.",
+                  "pm.test('Статус 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// ОБЯЗАТЕЛЬНЫЙ ТЕСТ ПРИЛ_5 (п. 4): валидность JSON.",
+                  "pm.test('Тело ответа — валидный JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "    JSON.parse(pm.response.text());",
+                  "});",
+                  "",
+                  "pm.test('Content-Type содержит application/json', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test('Тело ответа — массив', function () {",
+                  "    pm.expect(body).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Прил_5 п. 1: в базу нужно добавить 3-5 тестовых записей.",
+                  "pm.test('В базе не менее 3 заметок', function () {",
+                  "    pm.expect(body.length).to.be.at.least(3);",
+                  "});",
+                  "",
+                  "// Прил_5 п. 2.2: у каждой заметки должны быть все четыре поля.",
+                  "pm.test('У каждой заметки есть все обязательные поля', function () {",
+                  "    body.forEach(function (item, index) {",
+                  "        pm.expect(item, 'Заметка №' + index)",
+                  "          .to.have.all.keys('id', 'title_user', 'content', 'formatted_date');",
+                  "    });",
+                  "});",
+                  "",
+                  "// Прил_5 п. 2.2: пример \"id\": \"00001\" — строка ровно из 5 цифр.",
+                  "pm.test('id — строка из 5 цифр', function () {",
+                  "    body.forEach(function (item, index) {",
+                  "        pm.expect(item.id, 'Заметка №' + index + ': id = ' + item.id)",
+                  "          .to.match(/^\\d{5}$/);",
+                  "    });",
+                  "});",
+                  "",
+                  "// Прил_5 п. 2.2: пример \"Конференция ИТ - user25\", разделитель «пробел-дефис-пробел».",
+                  "pm.test('title_user собран по шаблону «{title} - {login}»', function () {",
+                  "    body.forEach(function (item, index) {",
+                  "        pm.expect(item.title_user, 'Заметка №' + index)",
+                  "          .to.be.a('string')",
+                  "          .and.to.include(' - ');",
+                  "    });",
+                  "});",
+                  "",
+                  "// Прил_5 п. 2.2: formatted_date — дата в формате ДД.ММ.ГГГГ.",
+                  "pm.test('formatted_date — дата в формате ДД.ММ.ГГГГ', function () {",
+                  "    body.forEach(function (item, index) {",
+                  "        pm.expect(item.formatted_date, 'Заметка №' + index + ': ' + item.formatted_date)",
+                  "          .to.match(/^\\d{2}\\.\\d{2}\\.\\d{4}$/);",
+                  "    });",
+                  "});",
+                  "",
+                  "// Главное требование модуля 5: данные не выдаются в исходном виде.",
+                  "pm.test('Данные отданы в обработанном виде, а не как в базе', function () {",
+                  "    const raw = pm.response.text();",
+                  "    pm.expect(raw).to.not.include('created_at');",
+                  "    pm.expect(raw).to.not.include('\"login\":');",
+                  "    pm.expect(raw).to.not.include('\"id_user\":');",
+                  "    pm.expect(raw).to.not.include('\"title\":');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notes"]
+            },
+            "description": "Успешный запрос списка всех заметок. Проверяет статус 200, валидность JSON, структуру ответа и все четыре правила обработки данных из Прил_5 п. 2.2."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02. Некорректный запрос (400)",
+      "description": "Прил_5 п. 3, строка 1: некорректный запрос -> 400 Bad Request. В теле должен быть ключ error.",
+      "item": [
+        {
+          "name": "2.1 GET /api/notes?id_user=abc",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Прил_5 п. 3, стр. 1: некорректный запрос -> 400.",
+                  "pm.test('Статус 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "// ОБЯЗАТЕЛЬНЫЙ ТЕСТ ПРИЛ_5 (п. 4): валидность JSON у ответа об ошибке.",
+                  "pm.test('Ответ — валидный JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "    JSON.parse(pm.response.text());",
+                  "});",
+                  "",
+                  "pm.test('В теле ответа есть ключ error', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('error');",
+                  "    pm.expect(body.error).to.be.a('string');",
+                  "    pm.expect(body.error.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test('В тексте ошибки упомянут параметр id_user', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.error.toLowerCase()).to.include('id_user');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notes?id_user=abc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notes"],
+              "query": [
+                {
+                  "key": "id_user",
+                  "value": "abc",
+                  "description": "Буквы вместо числа. По коду: isdigit() вернёт false -> сервер обязан ответить 400."
+                }
+              ]
+            },
+            "description": "Проверяет реакцию на некорректный параметр. Ровно та ситуация, которую перечисляет задание: «передан неверный параметр, неправильный тип данных»."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03. Данные не найдены (200 + [])",
+      "description": "Прил_5 п. 3, строка 2: если данных нет — вернуть код 200 и пустой массив. Это НЕ ошибка.",
+      "item": [
+        {
+          "name": "3.1 GET /api/notes?id_user=999999",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Прил_5 п. 3, стр. 2: данные не найдены -> это НЕ ошибка, код 200.",
+                  "pm.test('Статус 200 OK (а не 404!)', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// ОБЯЗАТЕЛЬНЫЙ ТЕСТ ПРИЛ_5 (п. 4): валидность JSON.",
+                  "pm.test('Ответ — валидный JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "    JSON.parse(pm.response.text());",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test('Тело ответа — массив', function () {",
+                  "    pm.expect(body).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Главное требование этой строки задания: пустой массив, а не ошибка.",
+                  "pm.test('Массив пустой — данных не найдено', function () {",
+                  "    pm.expect(body).to.have.lengthOf(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notes?id_user=999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notes"],
+              "query": [
+                {
+                  "key": "id_user",
+                  "value": "999999",
+                  "description": "Заведомо несуществующий id пользователя — так мы получаем пустой результат."
+                }
+              ]
+            },
+            "description": "Проверяет, что отсутствие данных не считается ошибкой. Запрос на пользователя №999999, которого нет в базе, должен дать код 200 и тело []."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04. Внутренняя ошибка сервера (500)",
+      "description": "Прил_5 п. 3, строка 3 и п. 4: при внутреннем сбое вернуть код 500 и тело {\"error\": \"...\"}.\n\nУЧЕБНЫЙ ПРИЁМ. Параметр id_user=² (надстрочный символ «²», U+00B2) проходит проверку isdigit(), но ломает int(). Ошибка попадает в try/except, и сервер отдаёт 500. Если бы в коде не было try/except, тест не сработал бы.",
+      "item": [
+        {
+          "name": "4.1 GET /api/notes?id_user=²",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// ОБЯЗАТЕЛЬНЫЙ ТЕСТ ПРИЛ_5 (п. 4): статус 500.",
+                  "pm.test('Статус 500 Internal Server Error', function () {",
+                  "    pm.response.to.have.status(500);",
+                  "});",
+                  "",
+                  "// ОБЯЗАТЕЛЬНЫЙ ТЕСТ ПРИЛ_5 (п. 4): валидность JSON. Клиент должен",
+                  "// уметь разобрать даже ответ об ошибке — это HTML быть не может.",
+                  "pm.test('Ответ — валидный JSON, а не HTML', function () {",
+                  "    pm.response.to.be.json;",
+                  "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                  "    JSON.parse(pm.response.text());",
+                  "});",
+                  "",
+                  "// Прил_5 п. 3, стр. 3: в теле должен быть ключ error.",
+                  "pm.test('В теле ответа есть ключ error', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('error');",
+                  "    pm.expect(body.error).to.be.a('string');",
+                  "    pm.expect(body.error.length).to.be.above(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notes?id_user=²",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notes"],
+              "query": [
+                {
+                  "key": "id_user",
+                  "value": "²",
+                  "description": "Надстрочный символ «²» (U+00B2). Проходит isdigit(), но ломает int() — попадаем в except и получаем 500."
+                }
+              ]
+            },
+            "description": "Проверяет обработку внутренней ошибки. Единственный запрос, у которого ожидаемый код — 500. Если вернул 400 вместо 500, значит в app.py нет блока try/except."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Перед КАЖДЫМ запросом коллекции: если переменная baseUrl пуста —",
+          "// подставляем адрес по умолчанию.",
+          "if (!pm.collectionVariables.get('baseUrl')) {",
+          "    pm.collectionVariables.set('baseUrl', 'http://127.0.0.1:8000');",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8000", "type": "string" }
+  ]
+}

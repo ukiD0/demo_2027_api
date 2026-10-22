@@ -1,0 +1,128 @@
+{
+  "info": {
+    "name": "Notes API (FastAPI)",
+    "description": "Коллекция тестов для FastAPI-приложения заметок.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000" }
+  ],
+  "item": [
+    {
+      "name": "01 - Статус 200",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Статус 200 OK', () => pm.response.to.have.status(200));",
+              "pm.test('Ответ — массив', () => pm.expect(pm.response.json()).to.be.an('array'));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/api/notes", "host": ["{{base_url}}"], "path": ["api", "notes"] }
+      }
+    },
+    {
+      "name": "02 - Валидность JSON",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Content-Type JSON', () => pm.response.headers.get('Content-Type').includes('application/json'));",
+              "pm.test('Тело — валидный JSON', () => pm.response.json());",
+              "pm.test('Поля объекта', () => pm.expect(Object.keys(pm.response.json()[0])).to.have.members(['id', 'title_user', 'content', 'formatted_date']));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/api/notes", "host": ["{{base_url}}"], "path": ["api", "notes"] }
+      }
+    },
+    {
+      "name": "03 - Статус 400",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Статус 400', () => pm.response.to.have.status(400));",
+              "pm.test('Есть error', () => pm.expect(pm.response.json()).to.have.property('error'));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/notes?id_user=abc",
+          "host": ["{{base_url}}"],
+          "path": ["api", "notes"],
+          "query": [{ "key": "id_user", "value": "abc" }]
+        }
+      }
+    },
+    {
+      "name": "04 - Пустой массив",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Статус 200', () => pm.response.to.have.status(200));",
+              "pm.test('Пустой массив', () => pm.expect(pm.response.json()).to.eql([]));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/notes?id_user=999",
+          "host": ["{{base_url}}"],
+          "path": ["api", "notes"],
+          "query": [{ "key": "id_user", "value": "999" }]
+        }
+      }
+    },
+    {
+      "name": "05 - Статус 500",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Статус 500', () => pm.response.to.have.status(500));",
+              "pm.test('Есть error', () => pm.expect(pm.response.json()).to.have.property('error'));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/notes?simulate_failure=true",
+          "host": ["{{base_url}}"],
+          "path": ["api", "notes"],
+          "query": [{ "key": "simulate_failure", "value": "true" }]
+        }
+      }
+    }
+  ]
+}
